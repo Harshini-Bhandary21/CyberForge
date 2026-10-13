@@ -81,6 +81,7 @@ class Session(BaseModel):
     context: list[ContextItem] = Field(default_factory=list)
     call_count: int = 0
     blocked_count: int = 0
+    tool_history: list[str] = Field(default_factory=list)  # allowed calls, newest last (capped)
     created_at: float = Field(default_factory=now)
 
 

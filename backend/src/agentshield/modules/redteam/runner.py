@@ -32,8 +32,16 @@ CONFIGS: dict[str, PolicyConfig] = {
     "no_capabilities": PolicyConfig(capabilities=False),
     "no_taint_tracking": PolicyConfig(taint=False),
     "no_intent_verifier": PolicyConfig(intent=False),
+    "no_session_risk": PolicyConfig(session_risk=False),
+    "no_output_review": PolicyConfig(output_review=False),
     "capabilities_only": PolicyConfig(
-        taint=False, dlp=False, intent=False, fraud=False, human_in_the_loop=False
+        taint=False,
+        dlp=False,
+        intent=False,
+        fraud=False,
+        human_in_the_loop=False,
+        session_risk=False,
+        output_review=False,
     ),
 }
 

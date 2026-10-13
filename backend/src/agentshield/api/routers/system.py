@@ -39,6 +39,32 @@ def verify(c: C) -> dict[str, Any]:
     return c.store.verify_chain()
 
 
+@router.post("/events/anchor", status_code=201, dependencies=[AdminAccess])
+def anchor(c: C) -> dict[str, Any]:
+    return c.anchors.checkpoint()
+
+
+@router.get("/events/anchors")
+def anchors(c: C) -> list[dict[str, Any]]:
+    return c.anchors.list()
+
+
+@router.get("/events/anchors/verify")
+def verify_anchors(c: C) -> dict[str, Any]:
+    return c.anchors.verify()
+
+
+@router.get("/events/{event_id}/proof")
+def event_proof(event_id: int, c: C) -> dict[str, Any]:
+    cps = c.anchors.list(1)
+    if not cps:
+        raise HTTPException(404, "no checkpoint yet; create one first")
+    proof = c.anchors.prove(event_id, cps[0])
+    if not proof:
+        raise HTTPException(404, "event is not covered by the latest checkpoint")
+    return proof
+
+
 def demo_enabled(c: C) -> None:
     if not c.settings.demo_on:
         raise HTTPException(404, "Not found")

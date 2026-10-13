@@ -20,6 +20,7 @@ from agentshield.core.models import (
     Verdict,
     VerifierResult,
 )
+from agentshield.core.risk import APPROVAL_P, BLOCK_P
 from agentshield.core.tools import ToolSpec
 
 
@@ -32,6 +33,8 @@ class PolicyConfig:
     fraud: bool = True
     human_in_the_loop: bool = True  # critical tools always need a human
     quarantine: bool = True
+    session_risk: bool = True
+    output_review: bool = True
 
 
 @dataclass
@@ -48,6 +51,9 @@ class PolicyInput:
     agent_quarantined: bool = False
     revoked: bool = False
     identity_unverified_and_required: bool = False
+    session_risk: float = 0.0  # posterior P(session is attacked), see core.risk
+    session_risk_reasons: list[str] = field(default_factory=list)
+    relayed_claims: list[str] = field(default_factory=list)  # "kind:value (source)"
 
 
 _PAYMENT_INSTRUCTION = re.compile(
@@ -149,6 +155,43 @@ def evaluate(inp: PolicyInput, cfg: PolicyConfig) -> tuple[Verdict, Risk, list[F
                     Verdict.REQUIRE_APPROVAL,
                     "Outbound message relays payment instructions copied from untrusted content (typical business-email-compromise).",
                     sorted({s.source for s in reused}),
+                )
+            )
+
+    if cfg.output_review and inp.relayed_claims and spec and spec.category == "egress":
+        findings.append(
+            _f(
+                "R-OUT-001",
+                Risk.HIGH,
+                Verdict.REQUIRE_APPROVAL,
+                "Outgoing message relays claims that only a suspicious untrusted source contains.",
+                inp.relayed_claims[:6],
+            )
+        )
+
+    if (
+        cfg.session_risk
+        and spec
+        and spec.category in {"egress", "network", "exec", "financial", "admin"}
+    ):
+        if inp.session_risk >= BLOCK_P and RISK_ORDER[risk] >= RISK_ORDER[Risk.HIGH]:
+            findings.append(
+                _f(
+                    "R-RISK-002",
+                    Risk.CRITICAL,
+                    Verdict.BLOCK,
+                    f"Session looks compromised (P={inp.session_risk:.2f}): high-impact action refused.",
+                    inp.session_risk_reasons[:5],
+                )
+            )
+        elif inp.session_risk >= APPROVAL_P and RISK_ORDER[risk] >= RISK_ORDER[Risk.MEDIUM]:
+            findings.append(
+                _f(
+                    "R-RISK-001",
+                    Risk.HIGH,
+                    Verdict.REQUIRE_APPROVAL,
+                    f"Accumulated session evidence of an attack (P={inp.session_risk:.2f}).",
+                    inp.session_risk_reasons[:5],
                 )
             )
 

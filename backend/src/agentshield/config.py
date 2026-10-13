@@ -44,6 +44,9 @@ class Settings(BaseSettings):
     enable_demo: bool | None = None  # default: on except in production
     agent_signing_secret: SecretStr = SecretStr(DEFAULT_SIGNING_SECRET)
     require_agent_identity: bool = False
+    anchor_export_path: str | None = (
+        None  # append signed audit checkpoints here (ship to WORM storage)
+    )
 
     # ── LLM providers (isolated intent verifier + incident narratives) ──────
     # Tried in order; the first that answers wins. Without any key, heuristics run offline.

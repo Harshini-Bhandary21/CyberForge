@@ -22,3 +22,5 @@ deploy/htpasswd
 # Local tooling
 .claude/
 deploy/
+.api.log
+.web.log

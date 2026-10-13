@@ -6,7 +6,8 @@ import json
 import time
 
 from agentshield.config import Settings
-from agentshield.core import dlp, taint
+from agentshield.core import dlp, outreview, taint
+from agentshield.core import risk as session_risk
 from agentshield.core.agents import AgentRegistry
 from agentshield.core.approvals import ApprovalService, args_hash
 from agentshield.core.dlp import redact_value
@@ -69,6 +70,9 @@ class GuardService:
             else None
         )
 
+        sr = session_risk.assess(session)
+        relayed = outreview.review(spec, req.args, session.user_goal, session.context).relayed
+
         fraud_verdict, fraud_reasons = None, []
         if spec and spec.category == "financial" and self.config.fraud:
             amount = _to_float(req.args.get("amount"))
@@ -109,6 +113,9 @@ class GuardService:
                 outbound_text=json.dumps(req.args, default=str) if spec and spec.egress else "",
                 identity_unverified_and_required=self.settings.require_agent_identity
                 and not session.identity_verified,
+                session_risk=sr.probability,
+                session_risk_reasons=sr.reasons,
+                relayed_claims=[f"{c.kind}:{c.value} (from {c.source})" for c in relayed],
             ),
             self.config,
         )
@@ -147,6 +154,8 @@ class GuardService:
         session.call_count += 1
         if verdict == Verdict.BLOCK:
             session.blocked_count += 1
+        elif verdict == Verdict.ALLOW:
+            session.tool_history = (session.tool_history + [req.tool])[-200:]
 
         anomalies = self.anomaly.observe(session, spec, req, verdict, hour=self.settings.fixed_hour)
         if verdict == Verdict.ALLOW:

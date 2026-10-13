@@ -6,6 +6,7 @@ from dataclasses import dataclass
 
 from agentshield.config import Settings
 from agentshield.core.agents import AgentRegistry
+from agentshield.core.anchor import Anchors
 from agentshield.core.approvals import ApprovalService
 from agentshield.core.guard import GuardService
 from agentshield.core.policy import PolicyConfig
@@ -31,6 +32,7 @@ class Container:
     incidents: IncidentService
     sessions: SessionService
     guard: GuardService
+    anchors: Anchors
 
 
 def build_container(
@@ -59,5 +61,17 @@ def build_container(
         store, settings, sessions, agents, approvals, verifier, anomaly, fraud, incidents, policy
     )
     return Container(
-        settings, store, llm, agents, approvals, anomaly, fraud, incidents, sessions, guard
+        settings,
+        store,
+        llm,
+        agents,
+        approvals,
+        anomaly,
+        fraud,
+        incidents,
+        sessions,
+        guard,
+        Anchors(
+            store, settings.agent_signing_secret.get_secret_value(), settings.anchor_export_path
+        ),
     )

@@ -21,6 +21,9 @@ Mailbox and documents the agent can read; money the agent can move; systems it c
 | Slow drift / compromised agent | Behaviour engine (new tool/destination, bursts, volume, off-hours); baselines resist poisoning |
 | Agent impersonation | HMAC-signed agent identity (optional enforcement) |
 | Tampering with evidence | SHA-256 hash-chained audit log with verification |
+| Rewritten or truncated audit history | Signed Merkle checkpoints (RFC 6962 tree, HMAC) with inclusion proofs; export to write-once storage via `AGENTSHIELD_ANCHOR_EXPORT_PATH` |
+| Slow multi-step attacks that stay under per-call thresholds | Session risk: Bayesian log-odds accumulation of evidence gates risky actions (R-RISK-001/002) |
+| False claims relayed to legitimate recipients | Outbound claim review: numbers, dates, links and ids that only a suspicious untrusted source contains need approval (R-OUT-001) |
 | Insecure code / dependencies produced by coding agents | Code & Config Guard (patterns, secrets, typosquat and hallucinated packages) |
 
 ## Out of scope / known gaps (be explicit)

@@ -78,6 +78,7 @@ def main() -> None:
         action="store_true",
         help="make one real, tiny call to each configured LLM provider",
     )
+    sub.add_parser("anchor", help="write a signed Merkle checkpoint of the audit log")
     sub.add_parser("demo", help="run the scripted end-to-end scenario and print the transcript")
     rt = sub.add_parser("redteam", help="run a red-team campaign and print the summary")
     rt.add_argument("--cases", type=int, default=300)
@@ -89,6 +90,9 @@ def main() -> None:
         uvicorn.run("agentshield.main:app", host=args.host, port=args.port, reload=args.reload)
     elif args.cmd == "doctor":
         raise SystemExit(doctor(live=args.live))
+    elif args.cmd == "anchor":
+        cp = build_container(get_settings()).anchors.checkpoint()
+        print(json.dumps(cp, indent=2))
     elif args.cmd == "demo":
         from agentshield.demo.scenario import run
 
