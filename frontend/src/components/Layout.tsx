@@ -149,7 +149,7 @@ export default function Layout() {
           </div>
           <div className="hidden items-center gap-2 text-xs text-ink-3 md:flex">
             <Radar size={14} aria-hidden />
-            {overview.isError ? "Backend unreachable. Start it with `make api`." : "Connected: all checks run live"}
+            {overview.isError ? "Can't reach the shield right now. Retrying automatically." : "Connected: all checks run live"}
           </div>
           <div className="flex items-center gap-2">
             <Button variant="primary" title="Runs a scripted attack so you can see the shield respond" onClick={() => demo.mutate()} loading={demo.isPending}>
