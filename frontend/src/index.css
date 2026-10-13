@@ -5,19 +5,20 @@
    series-1 orange, series-2 green; status colours are reserved for state and always ship with an icon + label. */
 :root {
   color-scheme: light;
-  /* Glassmorphism: translucent surfaces over a colourful backdrop, blurred by backdrop-filter. */
-  --bg: #fafafa;
-  --surface: rgba(255, 255, 255, 0.62);
-  --surface-2: rgba(255, 255, 255, 0.42);
-  --line: rgba(0, 0, 0, 0.12);
-  --glass-edge: rgba(255, 255, 255, 0.85);
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  --blob-1: rgba(255, 122, 26, 0.42);
-  --blob-2: rgba(229, 50, 45, 0.30);
-  --blob-3: rgba(34, 170, 80, 0.30);
-  --ink: #0a0a0a;
-  --ink-2: #3a3a3a;
-  --ink-3: #595959;
+  /* Claymorphism: soft, puffy, opaque surfaces lit from the top-left (light edge + dark drop shadow). */
+  --bg: #efeae3;
+  --surface: #f7f3ee;
+  --surface-2: #e8e1d8;
+  --line: rgba(80, 60, 40, 0.1);
+  --glass-edge: rgba(255, 255, 255, 0.9);
+  --glass-shadow: rgba(120, 95, 70, 0.28);
+  --clay-inner: rgba(120, 95, 70, 0.16);
+  --blob-1: rgba(255, 122, 26, 0.0);
+  --blob-2: rgba(229, 50, 45, 0.0);
+  --blob-3: rgba(34, 170, 80, 0.0);
+  --ink: #1a1512;
+  --ink-2: #4a413a;
+  --ink-3: #6b6058;
   --accent: #d9480f;
   --accent-ink: #ffffff;
   --series-1: #d9480f;
@@ -36,18 +37,19 @@
 @media (prefers-color-scheme: dark) {
   :root:where(:not([data-theme="light"])) {
     color-scheme: dark;
-    --bg: #050505;
-    --surface: rgba(255, 255, 255, 0.07);
-    --surface-2: rgba(255, 255, 255, 0.045);
-    --line: rgba(255, 255, 255, 0.14);
-    --glass-edge: rgba(255, 255, 255, 0.2);
-    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-    --blob-1: rgba(255, 106, 0, 0.34);
-    --blob-2: rgba(230, 40, 40, 0.28);
-    --blob-3: rgba(30, 190, 90, 0.22);
-    --ink: #fafafa;
-    --ink-2: #d4d4d4;
-    --ink-3: #a3a3a3;
+    --bg: #1b1917;
+    --surface: #272320;
+    --surface-2: #1e1b19;
+    --line: rgba(255, 240, 225, 0.07);
+    --glass-edge: rgba(255, 240, 225, 0.09);
+    --glass-shadow: rgba(0, 0, 0, 0.7);
+    --clay-inner: rgba(0, 0, 0, 0.45);
+    --blob-1: rgba(255, 106, 0, 0.0);
+    --blob-2: rgba(230, 40, 40, 0.0);
+    --blob-3: rgba(30, 190, 90, 0.0);
+    --ink: #faf5ef;
+    --ink-2: #d6cdc3;
+    --ink-3: #a39a90;
     --accent: #ee5a0b;
     --series-1: #ff7a1a;
     --series-2: #2fcf6a;
@@ -61,18 +63,19 @@
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #050505;
-  --surface: rgba(255, 255, 255, 0.07);
-  --surface-2: rgba(255, 255, 255, 0.045);
-  --line: rgba(255, 255, 255, 0.14);
-  --glass-edge: rgba(255, 255, 255, 0.2);
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-  --blob-1: rgba(255, 106, 0, 0.34);
-  --blob-2: rgba(230, 40, 40, 0.28);
-  --blob-3: rgba(30, 190, 90, 0.22);
-  --ink: #fafafa;
-  --ink-2: #d4d4d4;
-  --ink-3: #a3a3a3;
+  --bg: #1b1917;
+  --surface: #272320;
+  --surface-2: #1e1b19;
+  --line: rgba(255, 240, 225, 0.07);
+  --glass-edge: rgba(255, 240, 225, 0.09);
+  --glass-shadow: rgba(0, 0, 0, 0.7);
+  --clay-inner: rgba(0, 0, 0, 0.45);
+  --blob-1: rgba(255, 106, 0, 0.0);
+  --blob-2: rgba(230, 40, 40, 0.0);
+  --blob-3: rgba(30, 190, 90, 0.0);
+  --ink: #faf5ef;
+  --ink-2: #d6cdc3;
+  --ink-3: #a39a90;
   --accent: #ee5a0b;
   --series-1: #ff7a1a;
   --series-2: #2fcf6a;
@@ -109,12 +112,7 @@ body,
   height: 100%;
 }
 body {
-  background:
-    radial-gradient(900px 600px at 8% 0%, var(--blob-1), transparent 60%),
-    radial-gradient(800px 600px at 95% 12%, var(--blob-2), transparent 60%),
-    radial-gradient(900px 700px at 60% 105%, var(--blob-3), transparent 60%),
-    var(--bg);
-  background-attachment: fixed;
+  background: var(--bg);
   color: var(--ink);
   font-family: var(--font-sans);
   font-size: 14px;
@@ -178,38 +176,74 @@ textarea:focus, input:focus, select:focus {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
-/* ───────── Glass ─────────
-   Every translucent surface gets blur, a bright edge and a soft shadow. */
-.bg-surface,
-[class*="bg-surface/"] {
-  -webkit-backdrop-filter: blur(18px) saturate(170%);
-  backdrop-filter: blur(18px) saturate(170%);
-  box-shadow: inset 0 1px 0 var(--glass-edge), var(--glass-shadow);
+/* ───────── Clay ─────────
+   Raised pieces: a light highlight top-left, a dark drop shadow bottom-right, big soft radii.
+   Wells (inputs, tracks, chips) are the opposite: pressed into the surface. */
+:root {
+  --clay-raise:
+    9px 9px 20px var(--glass-shadow),
+    -7px -7px 16px var(--glass-edge),
+    inset 2px 2px 3px var(--glass-edge),
+    inset -3px -3px 6px var(--clay-inner);
+  --clay-raise-sm:
+    5px 5px 11px var(--glass-shadow),
+    -4px -4px 9px var(--glass-edge),
+    inset 1px 1px 2px var(--glass-edge),
+    inset -2px -2px 4px var(--clay-inner);
+  --clay-press:
+    inset 4px 4px 8px var(--glass-shadow),
+    inset -4px -4px 8px var(--glass-edge);
+}
+.bg-surface {
+  border-color: transparent;
+  box-shadow: var(--clay-raise);
+}
+.rounded-xl.bg-surface,
+.rounded-xl.bg-surface-2 {
+  border-radius: 24px;
+}
+aside.bg-surface {
+  border-radius: 0 28px 28px 0;
+  border-right-color: transparent;
 }
 .bg-surface-2,
 [class*="bg-surface-2/"] {
-  -webkit-backdrop-filter: blur(10px) saturate(140%);
-  backdrop-filter: blur(10px) saturate(140%);
-  box-shadow: inset 0 1px 0 var(--glass-edge);
+  border-color: transparent;
+  box-shadow: var(--clay-press);
 }
-.bg-surface,
-.bg-surface-2 {
-  border-color: var(--glass-edge);
+.rounded-xl.border-dashed {
+  box-shadow: none;
+  border: 2px dashed var(--line);
 }
 header.backdrop-blur {
-  -webkit-backdrop-filter: blur(18px) saturate(170%);
-  backdrop-filter: blur(18px) saturate(170%);
-  background: var(--surface);
+  background: var(--bg);
+  box-shadow: 0 6px 16px -8px var(--glass-shadow);
+  border-bottom-color: transparent;
+}
+/* Buttons and chips are puffy; inputs are pressed in. */
+button {
+  border-radius: 14px;
+}
+button.bg-gradient-to-br,
+button.border {
+  box-shadow: var(--clay-raise-sm);
+}
+button.bg-gradient-to-br:active,
+button.border:active {
+  box-shadow: var(--clay-press);
+  transform: translateY(1px);
 }
 input,
 textarea,
 select {
   background: var(--surface-2);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
+  border-radius: 14px;
+  border-color: transparent;
+  box-shadow: var(--clay-press);
 }
-/* No backdrop-filter support: fall back to near-opaque surfaces so text stays readable. */
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  :root { --surface: rgba(255, 255, 255, 0.95); --surface-2: rgba(242, 242, 242, 0.95); }
-  :root[data-theme="dark"] { --surface: rgba(24, 24, 24, 0.96); --surface-2: rgba(36, 36, 36, 0.96); }
+nav a {
+  border-radius: 14px;
+}
+nav a[aria-current="page"] {
+  box-shadow: var(--clay-press);
 }
