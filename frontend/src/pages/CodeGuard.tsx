@@ -4,7 +4,7 @@ import { useState } from "react";
 import { api } from "@/api/client";
 import type { ScanReport, Risk } from "@/api/types";
 import { Chip } from "@/components/detect/shared";
-import { Analyzing, Button, Card, Empty, ErrorNote, Field, HowItWorks, Mono, PageHeader, ResultBanner, SeverityBadge, inputClass } from "@/components/ui";
+import { Analyzing, Button, Card, Empty, ErrorNote, Field, HowItWorks, Tag, PageHeader, ResultBanner, SeverityBadge, inputClass } from "@/components/ui";
 
 const CODE_EXAMPLE = `import hashlib
 import subprocess
@@ -84,14 +84,11 @@ function Report({ r }: { r: ScanReport }) {
             <li key={`${f.rule}-${i}`} className="rounded-xl border border-line bg-surface p-3">
               <div className="flex flex-wrap items-center gap-2">
                 <SeverityBadge severity={f.severity} />
-                <Mono>{f.rule}</Mono>
+                <Tag>{f.rule}</Tag>
                 {f.cwe && <Chip>{f.cwe}</Chip>}
                 {f.line != null && <span className="text-xs text-ink-3">Line {f.line}</span>}
               </div>
               <p className="mt-2">{f.message}</p>
-              {f.snippet && (
-                <pre className="mt-2 overflow-x-auto rounded-lg bg-surface-2 p-2.5 font-mono text-[12px]">{f.snippet}</pre>
-              )}
               {f.fix && (
                 <p className="mt-2 text-ink-2">
                   <span className="font-semibold text-good">How to fix: </span>

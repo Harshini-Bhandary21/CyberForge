@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Check, CheckCircle2, Info, X, XCircle } from "lucide-react";
 import { api } from "@/api/client";
 import type { Approval } from "@/api/types";
-import { Badge, Button, Card, Empty, ErrorNote, Field, inputClass, JsonBlock, Loading, Mono, PageHeader, SeverityBadge } from "@/components/ui";
+import { Badge, Button, Card, Empty, ErrorNote, Field, inputClass, PropList, Loading, Tag, PageHeader, SeverityBadge } from "@/components/ui";
 import { timeAgo } from "@/lib/format";
 
 type Tab = "pending" | "resolved" | "all";
@@ -23,7 +23,7 @@ function PendingCard({ a, reviewer }: { a: Approval; reviewer: string }) {
   return (
     <li className="rounded-xl border border-line bg-surface p-4">
       <div className="flex flex-wrap items-center gap-2">
-        <Mono>{a.tool}</Mono>
+        <Tag>{a.tool}</Tag>
         <SeverityBadge severity={a.risk} />
         <Badge tone="warn">Pending review</Badge>
         <span className="text-xs text-ink-3">
@@ -33,7 +33,7 @@ function PendingCard({ a, reviewer }: { a: Approval; reviewer: string }) {
       <div className="mt-3 grid gap-4 lg:grid-cols-2">
         <div className="min-w-0">
           <p className="mb-1 text-xs font-medium text-ink-2">Exact arguments</p>
-          <JsonBlock value={a.args} />
+          <PropList value={a.args} />
         </div>
         <div className="min-w-0">
           <p className="mb-1 text-xs font-medium text-ink-2">Why it was held</p>
@@ -77,7 +77,7 @@ function ResolvedRow({ a }: { a: Approval }) {
   return (
     <li className="rounded-xl border border-line bg-surface p-4">
       <div className="flex flex-wrap items-center gap-2">
-        <Mono>{a.tool}</Mono>
+        <Tag>{a.tool}</Tag>
         <SeverityBadge severity={a.risk} />
         {ok ? (
           <Badge tone="good" icon={CheckCircle2}>
@@ -97,7 +97,7 @@ function ResolvedRow({ a }: { a: Approval }) {
       <details className="mt-2">
         <summary className="cursor-pointer text-xs text-ink-2">Arguments and reasons</summary>
         <div className="mt-2">
-          <JsonBlock value={a.args} />
+          <PropList value={a.args} />
           {a.reasons.length > 0 && (
             <ul className="mt-2 list-disc pl-5 text-sm">
               {a.reasons.map((r, i) => (

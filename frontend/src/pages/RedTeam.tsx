@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { api } from "@/api/client";
 import type { RedTeamRun } from "@/api/types";
 import { BarCompare, type BarRow } from "@/components/charts/BarCompare";
-import { Badge, Button, Card, Empty, ErrorNote, Field, inputClass, Loading, Mono, PageHeader, Stat } from "@/components/ui";
+import { Badge, Button, Card, Empty, ErrorNote, Field, inputClass, Loading, Mono, Tag, PageHeader, Stat } from "@/components/ui";
 import { pct, titleCase } from "@/lib/format";
 
 const CONFIG_LABEL: Record<string, string> = {
@@ -142,7 +142,7 @@ function Results({ run }: { run: RedTeamRun }) {
               {rules.map(([id, n]) => (
                 <li key={id} title={`${id}: ${n} attacks stopped`}>
                   <div className="flex items-baseline justify-between gap-2 text-xs">
-                    <span><Mono>{id}</Mono> <span className="text-ink-2">{RULES[id] ?? "Other rule"}</span></span>
+                    <span><Tag>{id}</Tag> <span className="text-ink-2">{RULES[id] ?? "Other rule"}</span></span>
                     <span className="tabular-nums text-ink">{n}</span>
                   </div>
                   <div className="mt-1 h-1.5 rounded-full bg-surface-2" aria-hidden>
@@ -169,7 +169,7 @@ function Results({ run }: { run: RedTeamRun }) {
                 <tbody className="divide-y divide-line">
                   {run.breaches.map((b, i) => (
                     <tr key={`${b.payload}-${i}`}>
-                      <td className="py-1.5 pr-2"><Mono>{b.payload}</Mono></td>
+                      <td className="py-1.5 pr-2"><Tag>{b.payload}</Tag></td>
                       <td className="py-1.5 pr-2">{titleCase(b.mutator)}</td>
                       <td className="py-1.5 break-all">{b.host}</td>
                     </tr>

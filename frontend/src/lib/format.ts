@@ -16,6 +16,15 @@ export const titleCase = (s: string) =>
     .replace(/[_-]/g, " ")
     .replace(/\b\w/g, (c) => c.toUpperCase());
 
+/** Turn a backend identifier (send_email, R-TAINT-001, guard.decision, uuid) into plain words. */
+export function humanize(id: string): string {
+  const rule = /^R-([A-Z]+)-\d+$/.exec(id);
+  if (rule) return `${titleCase(rule[1].toLowerCase())} check`;
+  if (/^[0-9a-f-]{12,}$/i.test(id)) return `#${id.replace(/-/g, "").slice(0, 6)}`;
+  const t = id.replace(/[._:/\-]+/g, " ").replace(/\s+/g, " ").trim().toLowerCase();
+  return t.charAt(0).toUpperCase() + t.slice(1);
+}
+
 export const short = (s: string, n = 60) => (s.length > n ? `${s.slice(0, n - 1)}…` : s);
 
 export function download(filename: string, text: string, mime = "text/markdown") {

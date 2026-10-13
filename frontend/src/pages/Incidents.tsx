@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Activity, Check, CheckCircle2, Mail, Play, ShieldAlert, Siren, Wrench, type LucideIcon } from "lucide-react";
 import { api } from "@/api/client";
 import type { DemoStep, Incident, TimelineEntry } from "@/api/types";
-import { Badge, Button, Card, Empty, ErrorNote, Loading, Mono, PageHeader, SeverityBadge } from "@/components/ui";
+import { Badge, Button, Card, Empty, ErrorNote, Loading, Tag, PageHeader, SeverityBadge } from "@/components/ui";
 import { clock, timeAgo, titleCase } from "@/lib/format";
 
 const KIND_ICON: Record<TimelineEntry["kind"], { icon: LucideIcon; label: string }> = {
@@ -80,13 +80,13 @@ function Detail({ inc }: { inc: Incident }) {
           <div>
             <dt className="text-xs text-ink-3">Hostile sources</dt>
             <dd className="mt-0.5 flex flex-wrap gap-1">
-              {inc.hostile_sources.length ? inc.hostile_sources.map((s) => <Mono key={s}>{s}</Mono>) : <span className="text-ink-2">None</span>}
+              {inc.hostile_sources.length ? inc.hostile_sources.map((s) => <Tag key={s}>{s}</Tag>) : <span className="text-ink-2">None</span>}
             </dd>
           </div>
           <div>
             <dt className="text-xs text-ink-3">Blocked tools</dt>
             <dd className="mt-0.5 flex flex-wrap gap-1">
-              {inc.blocked_tools.length ? inc.blocked_tools.map((s) => <Mono key={s}>{s}</Mono>) : <span className="text-ink-2">None</span>}
+              {inc.blocked_tools.length ? inc.blocked_tools.map((s) => <Tag key={s}>{s}</Tag>) : <span className="text-ink-2">None</span>}
             </dd>
           </div>
           <div>
@@ -141,7 +141,7 @@ function Detail({ inc }: { inc: Incident }) {
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="text-sm font-medium">{titleCase(a.action)}</span>
-                    <Mono>{a.target}</Mono>
+                    <Tag>{a.target}</Tag>
                     <Badge tone={a.mode === "executed" ? "info" : "neutral"}>{a.mode === "executed" ? "Executes for real" : "Simulated"}</Badge>
                     <Badge>{a.reversible ? "Reversible" : "Not reversible"}</Badge>
                   </div>

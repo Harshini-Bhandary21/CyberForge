@@ -1,7 +1,7 @@
 import { Activity, Bot, GitBranch, Link2, ShieldQuestion } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { GuardDecision } from "@/api/types";
-import { Badge, JsonBlock, Mono, SeverityBadge, TrustBadge, VerdictBadge } from "@/components/ui";
+import { Badge, PropList, Tag, SeverityBadge, TrustBadge, VerdictBadge } from "@/components/ui";
 import { clock, pct, titleCase } from "@/lib/format";
 
 const VIA: Record<string, string> = {
@@ -33,10 +33,10 @@ export function DecisionDetail({ d }: { d: GuardDecision }) {
         <span className="text-xs text-ink-3">{clock(d.created_at)}</span>
       </div>
       <p className="mt-2 text-sm">
-        Agent <Mono>{d.agent_id}</Mono> called <Mono>{d.tool}</Mono>
+        Agent <Tag>{d.agent_id}</Tag> called <Tag>{d.tool}</Tag>
       </p>
       <div className="mt-2">
-        <JsonBlock value={d.args} />
+        <PropList value={d.args} />
       </div>
 
       <Section title={`Findings (${d.findings.length})`} icon={ShieldQuestion}>
@@ -47,7 +47,7 @@ export function DecisionDetail({ d }: { d: GuardDecision }) {
             {d.findings.map((f, i) => (
               <li key={`${f.rule}-${i}`} className="rounded-lg border border-line p-2.5">
                 <div className="flex flex-wrap items-center gap-2">
-                  <Mono>{f.rule}</Mono>
+                  <Tag>{f.rule}</Tag>
                   <SeverityBadge severity={f.severity} />
                   <VerdictBadge verdict={f.verdict} />
                 </div>
@@ -77,7 +77,7 @@ export function DecisionDetail({ d }: { d: GuardDecision }) {
             {d.taint.sources.map((s, i) => (
               <li key={`${s.item_id}-${i}`} className="rounded-lg border border-line p-2.5 text-sm">
                 <div className="flex flex-wrap items-center gap-2">
-                  <Mono>{s.source}</Mono>
+                  <Tag>{s.source}</Tag>
                   <TrustBadge trust={s.trust} />
                 </div>
                 <p className="mt-1 text-xs text-ink-2">
@@ -85,7 +85,7 @@ export function DecisionDetail({ d }: { d: GuardDecision }) {
                   {s.matched.length > 0 && ": "}
                   {s.matched.map((m, j) => (
                     <span key={j} className="mr-1">
-                      <Mono>{m}</Mono>
+                      <Tag>{m}</Tag>
                     </span>
                   ))}
                 </p>
@@ -130,12 +130,12 @@ export function DecisionDetail({ d }: { d: GuardDecision }) {
           <ul className="space-y-1 text-sm">
             {d.approval_id && (
               <li>
-                Held for human approval. <Link to="/approvals" className="text-accent underline">Open approvals queue</Link> (<Mono>{d.approval_id}</Mono>)
+                Held for human approval. <Link to="/approvals" className="text-accent underline">Open approvals queue</Link> (<Tag>{d.approval_id}</Tag>)
               </li>
             )}
             {d.incident_id && (
               <li>
-                Incident opened. <Link to="/incidents" className="text-accent underline">View incidents</Link> (<Mono>{d.incident_id}</Mono>)
+                Incident opened. <Link to="/incidents" className="text-accent underline">View incidents</Link> (<Tag>{d.incident_id}</Tag>)
               </li>
             )}
           </ul>

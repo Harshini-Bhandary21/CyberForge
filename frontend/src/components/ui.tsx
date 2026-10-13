@@ -12,7 +12,9 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
+import { ApiError } from "@/api/client";
 import type { Risk, Trust, Verdict } from "@/api/types";
+import { humanize, titleCase } from "@/lib/format";
 
 /* ───────── Layout primitives ───────── */
 
@@ -417,11 +419,22 @@ export function Loading({ label = "Loading…" }: { label?: string }) {
   );
 }
 
+function friendlyError(error: unknown): string {
+  const status = error instanceof ApiError ? error.status : undefined;
+  if (status === 400 || status === 422) return "Some of the details look wrong. Please check them and try again.";
+  if (status === 401 || status === 403) return "You don't have permission to do that.";
+  if (status === 404) return "We couldn't find what you asked for. It may have been removed.";
+  if (status === 409) return "That item has already changed. Refresh and try again.";
+  if (status === 429) return "Too many requests. Please wait a moment and try again.";
+  if (status !== undefined && status >= 500) return "Something went wrong on our side. Please try again shortly.";
+  return "We couldn't complete that. Check your connection and try again.";
+}
+
 export function ErrorNote({ error }: { error: unknown }) {
   return (
     <div role="alert" className="flex items-start gap-2 rounded-lg bg-[var(--critical-bg)] p-3 text-sm">
       <CircleAlert size={16} className="mt-0.5 shrink-0 text-critical" aria-hidden />
-      <span>{error instanceof Error ? error.message : String(error)}</span>
+      <span>{friendlyError(error)}</span>
     </div>
   );
 }
@@ -430,10 +443,32 @@ export function Mono({ children }: { children: ReactNode }) {
   return <code className="rounded bg-surface-2 px-1.5 py-0.5 font-mono text-[12px]">{children}</code>;
 }
 
-export function JsonBlock({ value }: { value: unknown }) {
+/** A plain-language label for a backend identifier (tool, rule, source, ID). */
+export function Tag({ children }: { children: string }) {
+  return <span className="rounded bg-surface-2 px-1.5 py-0.5 text-xs">{humanize(children)}</span>;
+}
+
+function renderValue(v: unknown): ReactNode {
+  if (v === null || v === undefined || v === "") return "—";
+  if (typeof v === "boolean") return v ? "Yes" : "No";
+  if (Array.isArray(v)) return v.length === 0 ? "—" : v.map((x) => (typeof x === "object" && x !== null ? "…" : String(x))).join(", ");
+  if (typeof v === "object") return <PropList value={v} />;
+  return String(v);
+}
+
+/** Readable label/value list. Replaces raw JSON dumps. */
+export function PropList({ value }: { value: unknown }) {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) return <span>{renderValue(value)}</span>;
+  const entries = Object.entries(value as Record<string, unknown>);
+  if (entries.length === 0) return <p className="text-sm text-ink-2">No details.</p>;
   return (
-    <pre className="max-h-64 overflow-auto rounded-lg bg-surface-2 p-3 font-mono text-[12px] leading-relaxed">
-      {JSON.stringify(value, null, 2)}
-    </pre>
+    <dl className="grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1 rounded-lg bg-surface-2 p-3 text-sm">
+      {entries.map(([k, v]) => (
+        <div key={k} className="contents">
+          <dt className="text-ink-3">{titleCase(k)}</dt>
+          <dd className="min-w-0 break-words">{renderValue(v)}</dd>
+        </div>
+      ))}
+    </dl>
   );
 }

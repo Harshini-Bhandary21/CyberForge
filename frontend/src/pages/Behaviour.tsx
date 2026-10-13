@@ -3,7 +3,7 @@ import { Activity, Ban, CheckCircle2, GraduationCap, ShieldCheck, Undo2 } from "
 import { api } from "@/api/client";
 import type { AgentInfo, AnomalyEvent } from "@/api/types";
 import { Chip } from "@/components/detect/shared";
-import { Badge, Button, Card, Empty, ErrorNote, Loading, PageHeader, Mono } from "@/components/ui";
+import { Badge, Button, Card, Empty, ErrorNote, Loading, PageHeader, Tag } from "@/components/ui";
 import { clock, timeAgo, titleCase } from "@/lib/format";
 
 const MATURE = 5;
@@ -154,7 +154,7 @@ export default function Behaviour() {
                   {anoms.data.map((e) => (
                     <tr key={e.id}>
                       <td className="whitespace-nowrap tabular-nums">{clock(e.ts)}</td>
-                      <td>{e.agent_id ? <Mono>{e.agent_id}</Mono> : "—"}</td>
+                      <td>{e.agent_id ? <Tag>{e.agent_id}</Tag> : "—"}</td>
                       <td className="whitespace-nowrap">{titleCase(e.kind)}</td>
                       <td>
                         <div className="flex items-center gap-2">

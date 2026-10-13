@@ -174,7 +174,6 @@ export interface CodeFinding {
   line: number | null;
   cwe: string | null;
   fix: string;
-  snippet: string;
 }
 
 export interface ScanReport {

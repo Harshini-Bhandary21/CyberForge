@@ -14,8 +14,7 @@ import {
   HowItWorks,
   inputClass,
   Loading,
-  Mono,
-  PageHeader,
+  Tag, PageHeader,
   TrustBadge,
   VerdictBadge,
 } from "@/components/ui";
@@ -288,7 +287,7 @@ export default function LiveGuard() {
             {session && (
               <div className="mt-3 border-t border-line pt-3 text-sm">
                 <p className="text-ink-2">
-                  Session <Mono>{session.id}</Mono> for <Mono>{session.agent_id}</Mono>
+                  Session <Tag>{session.id}</Tag> for <Tag>{session.agent_id}</Tag>
                 </p>
                 <p className="mt-2 text-xs font-medium text-ink-2">Granted capabilities</p>
                 <ul className="mt-1 flex flex-wrap gap-1.5" aria-label="Granted capabilities">
@@ -378,7 +377,7 @@ export default function LiveGuard() {
                 {contexts.map((c) => (
                   <li key={c.id} className="rounded-lg border border-line p-2.5 text-sm">
                     <div className="flex flex-wrap items-center gap-2">
-                      <Mono>{c.source}</Mono>
+                      <Tag>{c.source}</Tag>
                       <TrustBadge trust={c.trust} />
                       <span className="text-xs text-ink-2">Risk score {c.risk_score.toFixed(2)}</span>
                     </div>
@@ -387,7 +386,7 @@ export default function LiveGuard() {
                       <ul className="mt-1.5 space-y-0.5 text-xs">
                         {c.signals.map((s, i) => (
                           <li key={i} className="break-words">
-                            <Mono>{s.name}</Mono> <span className="text-ink-3">+{s.weight.toFixed(2)}</span> <span className="text-ink-2">{s.detail}</span>
+                            <Tag>{s.name}</Tag> <span className="text-ink-3">+{s.weight.toFixed(2)}</span> <span className="text-ink-2">{s.detail}</span>
                           </li>
                         ))}
                       </ul>
@@ -500,7 +499,7 @@ export default function LiveGuard() {
                             <td className="whitespace-nowrap tabular-nums">{clock(d.created_at)}</td>
                             <td className="whitespace-nowrap">{d.agent_id}</td>
                             <td>
-                              <Mono>{d.tool}</Mono>
+                              <Tag>{d.tool}</Tag>
                             </td>
                             <td>
                               <VerdictBadge verdict={d.verdict} />
@@ -511,7 +510,7 @@ export default function LiveGuard() {
                               ) : (
                                 <span className="flex flex-wrap gap-1">
                                   {rules.slice(0, 3).map((r) => (
-                                    <span key={r} className="whitespace-nowrap"><Mono>{r}</Mono></span>
+                                    <span key={r} className="whitespace-nowrap"><Tag>{r}</Tag></span>
                                   ))}
                                   {rules.length > 3 && <span className="text-xs text-ink-3">+{rules.length - 3}</span>}
                                 </span>

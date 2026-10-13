@@ -5,7 +5,7 @@ import { api } from "@/api/client";
 import type { AuditEvent, DemoStep, Overview as OverviewData } from "@/api/types";
 import { RiskGauge } from "@/components/charts/RiskGauge";
 import { Badge, Button, Card, Empty, ErrorNote, Loading, PageHeader, Stat } from "@/components/ui";
-import { clock, titleCase } from "@/lib/format";
+import { clock, humanize, titleCase } from "@/lib/format";
 
 const BREAKDOWN_LABEL: Record<string, string> = {
   open_incidents: "Open incidents",
@@ -124,9 +124,9 @@ export default function Overview() {
                 {events.data.map((e) => (
                   <tr key={e.id}>
                     <td className="whitespace-nowrap text-ink-3 tabular-nums">{clock(e.ts)}</td>
-                    <td className="whitespace-nowrap font-mono text-xs">{e.type}</td>
+                    <td className="whitespace-nowrap text-xs">{humanize(e.type)}</td>
                     <td className="text-ink-2">{e.agent_id ?? "—"}</td>
-                    <td className="max-w-[320px] truncate text-ink-2" title={JSON.stringify(e.payload)}>
+                    <td className="max-w-[320px] truncate text-ink-2">
                       {summarise(e)}
                     </td>
                   </tr>
@@ -168,14 +168,14 @@ function summarise(e: AuditEvent): string {
   const p = e.payload as Record<string, unknown>;
   switch (e.type) {
     case "guard.decision":
-      return `${p.tool} → ${p.verdict}${Array.isArray(p.rules) && p.rules.length ? ` (${(p.rules as string[]).join(", ")})` : ""}`;
+      return `${humanize(String(p.tool))} → ${humanize(String(p.verdict))}`;
     case "context.ingested":
-      return `${p.source} · ${p.trust} · risk ${Number(p.risk_score ?? 0).toFixed(2)}`;
+      return `${humanize(String(p.source))} · ${humanize(String(p.trust))} · risk ${Number(p.risk_score ?? 0).toFixed(2)}`;
     case "session.created":
       return String(p.goal ?? "");
     case "anomaly.detected":
-      return `${p.kind}: ${p.detail}`;
+      return `${humanize(String(p.kind))}: ${p.detail}`;
     default:
-      return JSON.stringify(p).slice(0, 120);
+      return "";
   }
 }
