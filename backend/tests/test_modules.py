@@ -165,3 +165,11 @@ def test_phish_sim_grading(settings, c: Container):
         truth = c.store.get("phish_sims", sim["id"])
         res = d.grade_phish(sim["id"], True, [f["id"] for f in truth["red_flags"]])
         assert res and res["correct"] and res["score"] == 100
+
+
+def test_robust_stats_resist_past_outliers():
+    from agentshield.modules.anomaly.engine import robust_z
+
+    history = [5.0, 6, 5, 4, 5, 6, 5, 200, 5, 6]  # one past incident would inflate mean/std
+    assert robust_z(40, history) > 3.5
+    assert robust_z(6, history) <= 1

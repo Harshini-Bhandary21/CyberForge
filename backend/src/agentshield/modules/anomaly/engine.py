@@ -14,6 +14,21 @@ from agentshield.core.tools import ToolSpec
 from agentshield.storage.store import Store
 
 MATURE_SESSIONS = 5
+HISTORY = 100  # recent observations kept for robust statistics
+MAD_SCALE = 1.4826  # makes MAD comparable to a standard deviation for normal data
+
+
+def median(xs: list[float]) -> float:
+    s = sorted(xs)
+    n = len(s)
+    return 0.0 if not n else (s[n // 2] if n % 2 else (s[n // 2 - 1] + s[n // 2]) / 2)
+
+
+def robust_z(x: float, history: list[float], floor: float = 1.0) -> float:
+    """Modified z-score: median/MAD instead of mean/std, so past outliers cannot hide new ones."""
+    med = median(history)
+    mad = median([abs(v - med) for v in history]) * MAD_SCALE
+    return (x - med) / max(mad, floor)
 
 
 class Profile(BaseModel):
@@ -26,6 +41,8 @@ class Profile(BaseModel):
     hours: list[int] = Field(default_factory=lambda: [0] * 24)
     arg_bytes_mean: float = 0.0
     arg_bytes_n: int = 0
+    call_history: list[int] = Field(default_factory=list)  # calls per session, recent
+    size_history: list[int] = Field(default_factory=list)  # argument bytes per call, recent
 
     @property
     def calls_std(self) -> float:
@@ -77,11 +94,13 @@ class AnomalyEngine:
         size = len(json.dumps(req.args, default=str))
         p.arg_bytes_n += 1
         p.arg_bytes_mean += (size - p.arg_bytes_mean) / p.arg_bytes_n
+        p.size_history = (p.size_history + [size])[-HISTORY:]
         self._save(p)
 
     def learn_session(self, agent_id: str, call_count: int) -> None:
         p = self.profile(agent_id)
         p.sessions += 1
+        p.call_history = (p.call_history + [call_count])[-HISTORY:]
         delta = call_count - p.calls_mean
         p.calls_mean += delta / p.sessions
         p.calls_m2 += delta * (call_count - p.calls_mean)
@@ -114,23 +133,31 @@ class AnomalyEngine:
                         kind="new_destination", score=0.8, detail=f"First-ever egress to '{dest}'"
                     )
                 )
-            std = max(p.calls_std, 1.0)
-            z = (session.call_count - p.calls_mean) / std
-            if z > 3 and session.call_count > p.calls_mean + 3:
+            hist = p.call_history or [round(p.calls_mean)]
+            z = max(
+                robust_z(session.call_count, [float(h) for h in hist]),
+                (session.call_count - p.calls_mean) / max(p.calls_std, 1.0)
+                if len(p.call_history) < MATURE_SESSIONS
+                else 0.0,
+            )
+            if z > 3.5 and session.call_count > median([float(h) for h in hist]) + 3:
                 out.append(
                     AnomalyRecord(
                         kind="call_burst",
                         score=min(0.95, 0.5 + z / 20),
-                        detail=f"{session.call_count} calls this session vs a norm of {p.calls_mean:.1f} ({z:.1f}σ)",
+                        detail=f"{session.call_count} calls this session vs a median of {median([float(h) for h in hist]):.0f} (robust z={z:.1f})",
                     )
                 )
             size = len(json.dumps(req.args, default=str))
-            if p.arg_bytes_n >= 10 and size > max(p.arg_bytes_mean * 8, 2000):
+            typical = (
+                median([float(v) for v in p.size_history]) if p.size_history else p.arg_bytes_mean
+            )
+            if p.arg_bytes_n >= 10 and size > max(typical * 8, 2000):
                 out.append(
                     AnomalyRecord(
                         kind="data_volume",
                         score=0.65,
-                        detail=f"Argument payload {size} B vs typical {p.arg_bytes_mean:.0f} B",
+                        detail=f"Argument payload {size} B vs typical {typical:.0f} B",
                     )
                 )
             h = time.localtime().tm_hour if hour is None else hour
