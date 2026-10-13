@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import re
 
+from agentshield.core import lexicon, mlscan
 from agentshield.core.models import Signal
 from agentshield.core.normalize import normalize
 
@@ -120,6 +121,16 @@ def noisy_or(weights: list[float]) -> float:
     return round(1 - p, 4)
 
 
+_WINDOW, _MAX_WINDOWS = 600, 20
+
+
+def _ml_probability(text: str) -> float:
+    """Highest classifier score over bounded windows, so cost stays flat for huge documents."""
+    m = mlscan.model()
+    windows = [text[i : i + _WINDOW] for i in range(0, max(len(text), 1), _WINDOW)][:_MAX_WINDOWS]
+    return max((m.predict(w) for w in windows if len(w.strip()) >= 20), default=0.0)
+
+
 def scan_injection(text: str) -> tuple[float, list[Signal]]:
     """Return ``(risk_score, signals)`` for text that is about to enter an agent's context."""
     norm = normalize(text)
@@ -143,6 +154,23 @@ def scan_injection(text: str) -> tuple[float, list[Signal]]:
                 name="hidden_html_text",
                 weight=0.4,
                 detail="Text styled to be invisible to humans (display:none, white-on-white, font-size:0)",
+            )
+        )
+    for cat in sorted(lexicon.scan(norm.text)):
+        signals.append(
+            Signal(
+                name=f"lexicon_{cat}",
+                weight=0.35,
+                detail=f"Contains a stock '{cat}' attack phrase (multilingual lexicon)",
+            )
+        )
+    p_ml = _ml_probability(norm.text)
+    if p_ml >= 0.6:
+        signals.append(
+            Signal(
+                name="ml_injection",
+                weight=0.45 if p_ml >= 0.8 else 0.3,
+                detail=f"Statistical classifier: {p_ml:.0%} likely an injection (catches paraphrases)",
             )
         )
     if norm.decoded_blobs and any(s.name != "payment_directive" for s in signals):

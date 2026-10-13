@@ -78,7 +78,21 @@ def test_reviewer_identity_comes_from_the_key_not_the_request():
         json={"approve": True, "reviewer": "the CEO"},
         headers=h("k-analyst"),
     ).json()
-    assert r["reviewer"].startswith("the CEO (key:") and r["status"] == "approved"
+    assert r["reviewer"].startswith("the CEO (key:")
+    # run_shell is critical: one analyst is not enough, a second distinct key completes the quorum
+    assert r["status"] == "pending" and r["required_approvals"] == 2
+    dup = c.post(
+        f"{API}/approvals/{d['approval_id']}/resolve",
+        json={"approve": True, "reviewer": "again"},
+        headers=h("k-analyst"),
+    )
+    assert dup.status_code == 409
+    r2 = c.post(
+        f"{API}/approvals/{d['approval_id']}/resolve",
+        json={"approve": True, "reviewer": "second"},
+        headers=h("k-admin"),
+    ).json()
+    assert r2["status"] == "approved"
 
 
 def test_security_headers_and_no_cache():

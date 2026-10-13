@@ -149,6 +149,11 @@ class GuardService:
                     args_hash=args_hash(req.tool, req.args),
                     risk=risk,
                     reasons=reasons,
+                    required_approvals=2
+                    if risk == Risk.CRITICAL
+                    and self.settings.two_person_critical
+                    and self.settings.reviewer_count >= 2
+                    else 1,
                 ).id
 
         session.call_count += 1
@@ -165,6 +170,7 @@ class GuardService:
                     session.agent_id,
                     _to_float(req.args.get("amount")),
                     str(req.args.get("payee") or ""),
+                    hour=self.settings.fixed_hour,
                 )
 
         decision = GuardDecision(

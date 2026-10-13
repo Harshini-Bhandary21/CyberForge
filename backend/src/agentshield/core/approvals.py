@@ -12,6 +12,10 @@ from agentshield.core.models import Risk, new_id, now
 from agentshield.storage.store import Store
 
 
+class DuplicateReviewer(Exception):
+    pass
+
+
 def args_hash(tool: str, args: dict[str, Any]) -> str:
     return hashlib.sha256(
         json.dumps([tool, args], sort_keys=True, default=str).encode()
@@ -28,6 +32,8 @@ class Approval(BaseModel):
     risk: Risk
     reasons: list[str]
     status: Literal["pending", "approved", "denied"] = "pending"
+    required_approvals: int = 1  # critical actions need two *different* reviewers
+    reviews: list[dict[str, Any]] = Field(default_factory=list)
     reviewer: str | None = None
     note: str | None = None
     created_at: float = Field(default_factory=now)
@@ -62,13 +68,40 @@ class ApprovalService:
         return [a for a in items if status is None or a.status == status]
 
     def resolve(
-        self, approval_id: str, approve: bool, reviewer: str, note: str | None
+        self,
+        approval_id: str,
+        approve: bool,
+        reviewer: str,
+        note: str | None,
+        reviewer_id: str | None = None,
     ) -> Approval | None:
+        """Record one review. A denial is final; approvals accumulate until the quorum of distinct
+        reviewers (``required_approvals``) is met. The same principal cannot approve twice."""
         apr = self.get(approval_id)
         if not apr or apr.status != "pending":
             return apr
-        apr.status = "approved" if approve else "denied"
-        apr.reviewer, apr.note, apr.resolved_at = reviewer, note, now()
+        rid = reviewer_id or reviewer
+        if any(r["id"] == rid for r in apr.reviews):
+            raise DuplicateReviewer("this reviewer has already reviewed this request")
+        apr.reviews.append(
+            {"id": rid, "name": reviewer, "approve": approve, "note": note, "at": now()}
+        )
+        apr.reviewer, apr.note = reviewer, note
+        approvals = sum(1 for r in apr.reviews if r["approve"])
+        if not approve:
+            apr.status = "denied"
+        elif approvals >= apr.required_approvals:
+            apr.status = "approved"
+        else:
+            self.store.put(self.COLLECTION, apr.id, apr.model_dump(mode="json"))
+            self.store.append_event(
+                "approval.reviewed",
+                {"approval_id": apr.id, "approvals": approvals, "required": apr.required_approvals},
+                session_id=apr.session_id,
+                agent_id=apr.agent_id,
+            )
+            return apr
+        apr.resolved_at = now()
         self.store.put(self.COLLECTION, apr.id, apr.model_dump(mode="json"))
         self.store.append_event(
             "approval.resolved",

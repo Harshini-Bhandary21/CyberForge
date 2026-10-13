@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import statistics
 import time
 from typing import Any
@@ -11,7 +12,11 @@ from pydantic import BaseModel, Field
 from agentshield.config import Settings
 from agentshield.core.detectors import noisy_or
 from agentshield.core.models import Signal, TaintTrace, Verdict
+from agentshield.modules.fraud.iforest import IsolationForest
 from agentshield.storage.store import Store
+
+MIN_FOREST_HISTORY = 30
+FOREST_ANOMALY = 0.68
 
 
 class FraudAssessment(BaseModel):
@@ -37,13 +42,23 @@ class FraudEngine:
             "amounts": [],
             "payees": [],
             "recent": [],
+            "hours": [],
         }
 
     def learn(
-        self, agent_id: str, amount: float, payee: str, *, record_recent: bool = True
+        self,
+        agent_id: str,
+        amount: float,
+        payee: str,
+        *,
+        record_recent: bool = True,
+        hour: int | None = None,
     ) -> None:
         p = self._profile(agent_id)
         p["amounts"] = (p["amounts"] + [amount])[-200:]
+        p["hours"] = (p.get("hours", []) + [time.localtime().tm_hour if hour is None else hour])[
+            -200:
+        ]
         if payee and payee not in p["payees"]:
             p["payees"] = (p["payees"] + [payee])[-500:]
         if record_recent:
@@ -100,6 +115,19 @@ class FraudEngine:
         if payee and payee not in p["payees"]:
             sig.append(Signal(name="new_payee", weight=0.3, detail=f"First payment to '{payee}'"))
 
+        hist = list(zip(p["amounts"][-len(p.get("hours", [])) :], p.get("hours", []), strict=False))
+        if len(hist) >= MIN_FOREST_HISTORY:
+            forest = IsolationForest().fit([_point(a, h) for a, h in hist])
+            iso = forest.score(_point(amount, hour))
+            if iso >= FOREST_ANOMALY:
+                sig.append(
+                    Signal(
+                        name="isolation_outlier",
+                        weight=min(0.6, 0.2 + (iso - FOREST_ANOMALY) * 3),
+                        detail=f"Isolation forest: payment is unusual for this agent's amount/hour pattern (score {iso:.2f})",
+                    )
+                )
+
         recent = [t for t in p["recent"] if time.time() - t < 600]
         if len(recent) >= 3:
             sig.append(
@@ -143,6 +171,12 @@ class FraudEngine:
             else Verdict.ALLOW
         )
         return FraudAssessment(score=score, verdict=verdict, signals=sig)
+
+
+def _point(amount: float, hour: int) -> list[float]:
+    """Features: log-amount and the hour on a circle (23:00 is close to 00:00)."""
+    ang = 2 * math.pi * hour / 24
+    return [math.log10(max(amount, 1.0)), math.sin(ang), math.cos(ang)]
 
 
 def mean_floor(amounts: list[float]) -> float:

@@ -8,7 +8,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from agentshield.api.deps import Analyst, C
-from agentshield.core.approvals import Approval
+from agentshield.core.approvals import Approval, DuplicateReviewer
 from agentshield.core.models import (
     ContextItem,
     ContextKind,
@@ -121,7 +121,12 @@ def approvals(c: C, status: str | None = None) -> list[Approval]:
 def resolve_approval(approval_id: str, body: ResolveIn, c: C, who: Analyst) -> Approval:
     # Identity comes from the authenticated key; the supplied name is only a display label.
     reviewer = f"{body.reviewer} ({who.id})" if c.settings.auth_configured else body.reviewer
-    apr = c.approvals.resolve(approval_id, approve=body.approve, reviewer=reviewer, note=body.note)
+    try:
+        apr = c.approvals.resolve(
+            approval_id, approve=body.approve, reviewer=reviewer, note=body.note, reviewer_id=who.id
+        )
+    except DuplicateReviewer as e:
+        raise HTTPException(409, str(e)) from e
     if not apr:
         raise HTTPException(404, "approval not found")
     return apr

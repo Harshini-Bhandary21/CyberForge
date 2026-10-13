@@ -44,6 +44,7 @@ class Settings(BaseSettings):
     enable_demo: bool | None = None  # default: on except in production
     agent_signing_secret: SecretStr = SecretStr(DEFAULT_SIGNING_SECRET)
     require_agent_identity: bool = False
+    two_person_critical: bool = True  # critical actions need two distinct reviewers (needs two reviewer keys)
     anchor_export_path: str | None = (
         None  # append signed audit checkpoints here (ship to WORM storage)
     )
@@ -92,6 +93,14 @@ class Settings(BaseSettings):
     @property
     def auth_configured(self) -> bool:
         return bool(self.api_key or self.api_keys)
+
+    @property
+    def reviewer_count(self) -> int:
+        """Distinct credentials able to review (analyst/admin); two are needed for a quorum."""
+        keys = {k for k, r in self.api_keys.items() if r in ("analyst", "admin")}
+        if self.api_key:
+            keys.add(self.api_key.get_secret_value())
+        return len(keys)
 
     def key_for(self, provider: str) -> str | None:
         secret = {

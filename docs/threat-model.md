@@ -18,7 +18,10 @@ Mailbox and documents the agent can read; money the agent can move; systems it c
 | Business-email-compromise relayed by the agent (bank-detail changes) | R-TAINT-004: payment instructions copied from untrusted text into an outbound message need approval |
 | Secrets leaking in outbound payloads | DLP (keys, tokens, JWT, private keys, card numbers with Luhn, PAN/Aadhaar) |
 | Phishing aimed at humans or agents | Social-engineering scanner (structural signals; stylometry is a weak signal only) |
-| Slow drift / compromised agent | Behaviour engine (new tool/destination, bursts, volume, off-hours); baselines resist poisoning |
+| Slow drift / compromised agent | Behaviour engine: new tool/destination, off-hours, median/MAD robust bursts and volume, CUSUM drift detection; baselines resist poisoning |
+| Rephrased or multilingual injection | Aho–Corasick phrase lexicon plus a char n-gram TF-IDF logistic classifier (advisory; ~77% recall / ~2% false positives in cross-validation on a small corpus) |
+| Unusual payments with no labelled fraud data | Per-agent isolation forest over amount and hour of day |
+| One compromised reviewer approving a critical action | Two distinct reviewers required for critical-risk tools (when two reviewer keys exist) |
 | Agent impersonation | HMAC-signed agent identity (optional enforcement) |
 | Tampering with evidence | SHA-256 hash-chained audit log with verification |
 | Rewritten or truncated audit history | Signed Merkle checkpoints (RFC 6962 tree, HMAC) with inclusion proofs; export to write-once storage via `AGENTSHIELD_ANCHOR_EXPORT_PATH` |

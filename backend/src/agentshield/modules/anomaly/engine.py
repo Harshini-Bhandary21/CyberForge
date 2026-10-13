@@ -14,6 +14,8 @@ from agentshield.core.tools import ToolSpec
 from agentshield.storage.store import Store
 
 MATURE_SESSIONS = 5
+CUSUM_K, CUSUM_H = 0.5, 5.0  # slack and decision threshold, in robust-z units
+EWMA_ALPHA = 0.3
 HISTORY = 100  # recent observations kept for robust statistics
 MAD_SCALE = 1.4826  # makes MAD comparable to a standard deviation for normal data
 
@@ -41,6 +43,8 @@ class Profile(BaseModel):
     hours: list[int] = Field(default_factory=lambda: [0] * 24)
     arg_bytes_mean: float = 0.0
     arg_bytes_n: int = 0
+    cusum: float = 0.0  # one-sided CUSUM of session sizes: accumulates sustained upward drift
+    ewma_calls: float = 0.0  # smoothed session size, for display and trend
     call_history: list[int] = Field(default_factory=list)  # calls per session, recent
     size_history: list[int] = Field(default_factory=list)  # argument bytes per call, recent
 
@@ -99,6 +103,16 @@ class AnomalyEngine:
 
     def learn_session(self, agent_id: str, call_count: int) -> None:
         p = self.profile(agent_id)
+        if len(p.call_history) >= MATURE_SESSIONS:
+            z = robust_z(float(call_count), [float(h) for h in p.call_history])
+            p.cusum = max(
+                0.0, p.cusum + z - CUSUM_K
+            )  # small steady shifts add up; one spike decays
+        p.ewma_calls = (
+            float(call_count)
+            if p.sessions == 0
+            else EWMA_ALPHA * call_count + (1 - EWMA_ALPHA) * p.ewma_calls
+        )
         p.sessions += 1
         p.call_history = (p.call_history + [call_count])[-HISTORY:]
         delta = call_count - p.calls_mean
@@ -170,6 +184,14 @@ class AnomalyEngine:
                         detail=f"Agent is almost never active at {h:02d}:00",
                     )
                 )
+        if p.mature and p.cusum >= CUSUM_H:
+            out.append(
+                AnomalyRecord(
+                    kind="behaviour_drift",
+                    score=min(0.9, 0.5 + p.cusum / 40),
+                    detail=f"Sessions have grown steadily beyond baseline (CUSUM {p.cusum:.1f}, smoothed {p.ewma_calls:.1f} calls)",
+                )
+            )
         if verdict == Verdict.BLOCK and session.blocked_count >= 3:
             out.append(
                 AnomalyRecord(
