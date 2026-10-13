@@ -44,7 +44,9 @@ class Settings(BaseSettings):
     enable_demo: bool | None = None  # default: on except in production
     agent_signing_secret: SecretStr = SecretStr(DEFAULT_SIGNING_SECRET)
     require_agent_identity: bool = False
-    two_person_critical: bool = True  # critical actions need two distinct reviewers (needs two reviewer keys)
+    two_person_critical: bool = (
+        True  # critical actions need two distinct reviewers (needs two reviewer keys)
+    )
     anchor_export_path: str | None = (
         None  # append signed audit checkpoints here (ship to WORM storage)
     )
