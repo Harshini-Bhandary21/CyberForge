@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+# Data
+backend/data/
+*.db
+*.db-wal
+*.db-shm
+# Node
+node_modules/
+frontend/dist/
+# Env / OS
+.env
+.env.local
+.DS_Store
+deploy/htpasswd
+
+# Local tooling
+.claude/
+deploy/

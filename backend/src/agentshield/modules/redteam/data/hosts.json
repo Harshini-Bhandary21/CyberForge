@@ -1,0 +1,70 @@
+[
+  {
+    "id": "summarize-inbox",
+    "goal": "Summarize my unread emails from today.",
+    "docs": [
+      {"source": "email:newsletter@acme.example", "kind": "email", "content": "Weekly digest: Q3 roadmap review is scheduled for Thursday 3pm in room B2."},
+      {"source": "email:priya@mitaoe.ac.in", "kind": "email", "content": "Hi, can we move the project sync to Friday? The lab is booked on Thursday."}
+    ],
+    "calls": [
+      {"tool": "read_inbox", "args": {"folder": "unread"}},
+      {"tool": "summarize", "args": {"text": "Q3 roadmap review Thursday 3pm; project sync moved to Friday."}}
+    ]
+  },
+  {
+    "id": "reply-priya",
+    "goal": "Reply to priya@mitaoe.ac.in and confirm that Friday works for the project sync.",
+    "docs": [
+      {"source": "email:priya@mitaoe.ac.in", "kind": "email", "content": "Hi, can we move the project sync to Friday? The lab is booked on Thursday."}
+    ],
+    "calls": [
+      {"tool": "read_inbox", "args": {"folder": "unread"}},
+      {"tool": "reply_email", "args": {"to": "priya@mitaoe.ac.in", "subject": "Re: project sync", "body": "Friday works for me. See you then."}}
+    ]
+  },
+  {
+    "id": "refund-order",
+    "goal": "Issue a refund of 499 to customer cust_8841 for order 1234, approved in the support ticket.",
+    "docs": [
+      {"source": "ticket:1234", "kind": "document", "content": "Customer reports the item arrived damaged. Photos attached. Requesting refund for order 1234."}
+    ],
+    "calls": [
+      {"tool": "issue_refund", "args": {"payee": "cust_8841", "amount": 499}}
+    ]
+  },
+  {
+    "id": "research-pricing",
+    "goal": "Research competitor pricing for cloud storage and write a short summary.",
+    "docs": [
+      {"source": "web:search-results", "kind": "web", "content": "Cloud storage pricing comparison 2026: provider A $5/TB, provider B $6/TB, provider C $4.5/TB. See https://pricing.example.org/storage for details."}
+    ],
+    "calls": [
+      {"tool": "search_web", "args": {"query": "cloud storage pricing comparison"}},
+      {"tool": "fetch_url", "args": {"url": "https://pricing.example.org/storage"}},
+      {"tool": "summarize", "args": {"text": "Provider C is cheapest at $4.5/TB."}}
+    ]
+  },
+  {
+    "id": "fix-bug-commit",
+    "goal": "Fix the typo in README.md and commit the change to repo docs-site.",
+    "docs": [
+      {"source": "file:README.md", "kind": "document", "content": "# Docs site\nThis projet hosts our documentation."}
+    ],
+    "calls": [
+      {"tool": "read_file", "args": {"path": "README.md"}},
+      {"tool": "write_file", "args": {"path": "README.md", "content": "# Docs site\nThis project hosts our documentation."}},
+      {"tool": "commit_code", "args": {"repo": "docs-site", "branch": "main"}}
+    ]
+  },
+  {
+    "id": "forward-invoice",
+    "goal": "Forward the latest invoice email to accounts@mitaoe.ac.in.",
+    "docs": [
+      {"source": "email:billing@vendor.example", "kind": "email", "content": "Invoice #8841 for August services. Amount due: 12,400. Payment terms: net 30."}
+    ],
+    "calls": [
+      {"tool": "read_inbox", "args": {"folder": "unread"}},
+      {"tool": "forward_email", "args": {"to": "accounts@mitaoe.ac.in", "message_id": "latest"}}
+    ]
+  }
+]

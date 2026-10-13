@@ -1,0 +1,58 @@
+# Dashboard (nginx, basic-auth) → API (FastAPI) → PostgreSQL. Secrets come from .env (see .env.example).
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: shield
+      POSTGRES_DB: agentshield
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shield -d agentshield"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    # not published to the host: only the api service can reach it
+
+  api:
+    build: ./backend
+    depends_on:
+      db: { condition: service_healthy }
+    environment:
+      AGENTSHIELD_ENV: ${AGENTSHIELD_ENV:-development}
+      DATABASE_URL: postgresql://shield:${POSTGRES_PASSWORD}@db:5432/agentshield
+      AGENTSHIELD_CORS_ORIGINS: '["http://localhost:8080"]'
+      AGENTSHIELD_API_KEYS: ${AGENTSHIELD_API_KEYS:-{}}
+      AGENTSHIELD_AGENT_SIGNING_SECRET: ${AGENTSHIELD_AGENT_SIGNING_SECRET:?set AGENTSHIELD_AGENT_SIGNING_SECRET in .env}
+      AGENTSHIELD_USE_LLM: ${AGENTSHIELD_USE_LLM:-true}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://localhost:8000/api/v1/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  web:
+    build: ./frontend
+    ports:
+      - "8080:8080"
+    environment:
+      UI_API_KEY: ${UI_API_KEY:-}
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    volumes:
+      - ./deploy/htpasswd:/etc/nginx/htpasswd:ro
+    depends_on:
+      api: { condition: service_healthy }
+
+volumes:
+  pgdata:

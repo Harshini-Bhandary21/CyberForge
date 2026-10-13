@@ -1,0 +1,57 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "agentshield"
+version = "0.1.0"
+description = "Runtime security platform for AI agents: injection firewall, anomaly detection, SOC copilot, fraud guard and compliance automation."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+dependencies = [
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.30",
+  "pydantic>=2.8",
+  "pydantic-settings>=2.4",
+  "anthropic>=1.0",
+  "httpx>=0.27",
+  "psycopg[binary,pool]>=3.2",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8",
+  "ruff>=0.6",
+]
+
+[project.scripts]
+agentshield = "agentshield.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/agentshield"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "S"]
+ignore = [
+  "S101",  # assert is fine in tests
+  "S105", "S106",  # demo secrets are synthetic
+  "S311",  # random is used for simulation, not security
+  "E501",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S"]
+"src/agentshield/modules/redteam/*" = ["S"]
+"src/agentshield/modules/dojo/*" = ["S"]
+"src/agentshield/modules/codeguard/*" = ["S"]
