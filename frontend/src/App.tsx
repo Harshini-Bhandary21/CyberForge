@@ -8,6 +8,7 @@ import Dojo from "@/pages/Dojo";
 import FraudGuard from "@/pages/FraudGuard";
 import Incidents from "@/pages/Incidents";
 import LiveGuard from "@/pages/LiveGuard";
+import NotFound from "@/pages/NotFound";
 import Overview from "@/pages/Overview";
 import RedTeam from "@/pages/RedTeam";
 import Scanner from "@/pages/Scanner";
@@ -27,7 +28,7 @@ export default function App() {
         <Route path="compliance" element={<Compliance />} />
         <Route path="redteam" element={<RedTeam />} />
         <Route path="dojo" element={<Dojo />} />
-        <Route path="*" element={<Overview />} />
+        <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
   );

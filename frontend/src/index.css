@@ -2,89 +2,80 @@
 
 /* ───────── Design tokens ─────────
    Light/dark are selected steps of the same hues (validated reference palette):
-   series-1 orange, series-2 green; status colours are reserved for state and always ship with an icon + label. */
+   series-1 blue, series-2 teal; status colours are reserved for state and always ship with an icon + label. */
 :root {
   color-scheme: light;
   /* Claymorphism: soft, puffy, opaque surfaces lit from the top-left (light edge + dark drop shadow). */
-  --bg: #efeae3;
-  --surface: #f7f3ee;
-  --surface-2: #e8e1d8;
-  --line: rgba(80, 60, 40, 0.1);
-  --glass-edge: rgba(255, 255, 255, 0.9);
-  --glass-shadow: rgba(120, 95, 70, 0.28);
-  --clay-inner: rgba(120, 95, 70, 0.16);
-  --blob-1: rgba(255, 122, 26, 0.0);
-  --blob-2: rgba(229, 50, 45, 0.0);
-  --blob-3: rgba(34, 170, 80, 0.0);
-  --ink: #1a1512;
-  --ink-2: #4a413a;
-  --ink-3: #6b6058;
-  --accent: #d9480f;
+  --bg: #edf0f5;
+  --surface: #f8fafc;
+  --surface-2: #e4e9f0;
+  --line: rgba(40, 60, 100, 0.12);
+  --glass-edge: rgba(255, 255, 255, 0.95);
+  --glass-shadow: rgba(60, 80, 120, 0.22);
+  --clay-inner: rgba(60, 80, 120, 0.1);
+  --ink: #0f172a;
+  --ink-2: #334155;
+  --ink-3: #566377;
+  --accent: #2563eb;
   --accent-ink: #ffffff;
-  --series-1: #d9480f;
-  --series-2: #1f9d4d;
-  --good: #16a34a;
-  --warn: #f59e0b;
-  --serious: #ea580c;
-  --critical: #dc2626;
-  --good-bg: rgba(22, 163, 74, 0.15);
-  --warn-bg: rgba(245, 158, 11, 0.2);
-  --serious-bg: rgba(234, 88, 12, 0.16);
-  --critical-bg: rgba(220, 38, 38, 0.14);
-  --info-bg: rgba(217, 72, 15, 0.14);
-  --grad-end: #dc2626;
+  --series-1: #2563eb;
+  --series-2: #0f766e;
+  --good: #15803d;
+  --warn: #b45309;
+  --serious: #c2410c;
+  --critical: #b91c1c;
+  --good-bg: rgba(21, 128, 61, 0.12);
+  --warn-bg: rgba(180, 83, 9, 0.13);
+  --serious-bg: rgba(194, 65, 12, 0.12);
+  --critical-bg: rgba(185, 28, 28, 0.11);
+  --info-bg: rgba(37, 99, 235, 0.11);
+  --grad-end: #1d4ed8;
 }
 @media (prefers-color-scheme: dark) {
   :root:where(:not([data-theme="light"])) {
     color-scheme: dark;
-    --bg: #1b1917;
-    --surface: #272320;
-    --surface-2: #1e1b19;
-    --line: rgba(255, 240, 225, 0.07);
-    --glass-edge: rgba(255, 240, 225, 0.09);
-    --glass-shadow: rgba(0, 0, 0, 0.7);
-    --clay-inner: rgba(0, 0, 0, 0.45);
-    --blob-1: rgba(255, 106, 0, 0.0);
-    --blob-2: rgba(230, 40, 40, 0.0);
-    --blob-3: rgba(30, 190, 90, 0.0);
-    --ink: #faf5ef;
-    --ink-2: #d6cdc3;
-    --ink-3: #a39a90;
-    --accent: #ee5a0b;
-    --series-1: #ff7a1a;
-    --series-2: #2fcf6a;
-    --good-bg: rgba(34, 197, 94, 0.18);
-    --warn-bg: rgba(251, 191, 36, 0.18);
-    --serious-bg: rgba(251, 122, 58, 0.2);
-    --critical-bg: rgba(239, 68, 68, 0.22);
-    --info-bg: rgba(238, 90, 11, 0.2);
-    --grad-end: #ef4444;
+    --bg: #0e131c;
+    --surface: #19212e;
+    --surface-2: #121823;
+    --line: rgba(170, 195, 240, 0.1);
+    --glass-edge: rgba(170, 195, 240, 0.08);
+    --glass-shadow: rgba(0, 0, 0, 0.6);
+    --clay-inner: rgba(0, 0, 0, 0.4);
+    --ink: #e8edf5;
+    --ink-2: #c0cadb;
+    --ink-3: #8e9bb0;
+    --accent: #3b82f6;
+    --series-1: #60a5fa;
+    --series-2: #2dd4bf;
+    --good-bg: rgba(34, 197, 94, 0.15);
+    --warn-bg: rgba(245, 158, 11, 0.16);
+    --serious-bg: rgba(251, 146, 60, 0.16);
+    --critical-bg: rgba(248, 113, 113, 0.17);
+    --info-bg: rgba(59, 130, 246, 0.17);
+    --grad-end: #2563eb;
   }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #1b1917;
-  --surface: #272320;
-  --surface-2: #1e1b19;
-  --line: rgba(255, 240, 225, 0.07);
-  --glass-edge: rgba(255, 240, 225, 0.09);
-  --glass-shadow: rgba(0, 0, 0, 0.7);
-  --clay-inner: rgba(0, 0, 0, 0.45);
-  --blob-1: rgba(255, 106, 0, 0.0);
-  --blob-2: rgba(230, 40, 40, 0.0);
-  --blob-3: rgba(30, 190, 90, 0.0);
-  --ink: #faf5ef;
-  --ink-2: #d6cdc3;
-  --ink-3: #a39a90;
-  --accent: #ee5a0b;
-  --series-1: #ff7a1a;
-  --series-2: #2fcf6a;
-  --good-bg: rgba(34, 197, 94, 0.18);
-  --warn-bg: rgba(251, 191, 36, 0.18);
-  --serious-bg: rgba(251, 122, 58, 0.2);
-  --critical-bg: rgba(239, 68, 68, 0.22);
-  --info-bg: rgba(238, 90, 11, 0.2);
-  --grad-end: #ef4444;
+  --bg: #0e131c;
+  --surface: #19212e;
+  --surface-2: #121823;
+  --line: rgba(170, 195, 240, 0.1);
+  --glass-edge: rgba(170, 195, 240, 0.08);
+  --glass-shadow: rgba(0, 0, 0, 0.6);
+  --clay-inner: rgba(0, 0, 0, 0.4);
+  --ink: #e8edf5;
+  --ink-2: #c0cadb;
+  --ink-3: #8e9bb0;
+  --accent: #3b82f6;
+  --series-1: #60a5fa;
+  --series-2: #2dd4bf;
+  --good-bg: rgba(34, 197, 94, 0.15);
+  --warn-bg: rgba(245, 158, 11, 0.16);
+  --serious-bg: rgba(251, 146, 60, 0.16);
+  --critical-bg: rgba(248, 113, 113, 0.17);
+  --info-bg: rgba(59, 130, 246, 0.17);
+  --grad-end: #2563eb;
 }
 
 @theme inline {
@@ -200,10 +191,10 @@ textarea:focus, input:focus, select:focus {
 }
 .rounded-xl.bg-surface,
 .rounded-xl.bg-surface-2 {
-  border-radius: 24px;
+  border-radius: 16px;
 }
 aside.bg-surface {
-  border-radius: 0 28px 28px 0;
+  border-radius: 0 20px 20px 0;
   border-right-color: transparent;
 }
 .bg-surface-2,
@@ -222,7 +213,7 @@ header.backdrop-blur {
 }
 /* Buttons and chips are puffy; inputs are pressed in. */
 button {
-  border-radius: 14px;
+  border-radius: 10px;
 }
 button.bg-gradient-to-br,
 button.border {
@@ -237,12 +228,12 @@ input,
 textarea,
 select {
   background: var(--surface-2);
-  border-radius: 14px;
+  border-radius: 10px;
   border-color: transparent;
   box-shadow: var(--clay-press);
 }
 nav a {
-  border-radius: 14px;
+  border-radius: 10px;
 }
 nav a[aria-current="page"] {
   box-shadow: var(--clay-press);
