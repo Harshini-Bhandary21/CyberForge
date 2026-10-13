@@ -5,13 +5,19 @@
    series-1 blue, series-2 orange; status colours are reserved for state and always ship with an icon + label. */
 :root {
   color-scheme: light;
-  --bg: #f6f6f4;
-  --surface: #fcfcfb;
-  --surface-2: #f0efec;
-  --line: #e2e1dc;
-  --ink: #0b0b0b;
-  --ink-2: #52514e;
-  --ink-3: #6f6e69;
+  /* Glassmorphism: translucent surfaces over a colourful backdrop, blurred by backdrop-filter. */
+  --bg: #e8ecfa;
+  --surface: rgba(255, 255, 255, 0.58);
+  --surface-2: rgba(255, 255, 255, 0.38);
+  --line: rgba(70, 80, 140, 0.16);
+  --glass-edge: rgba(255, 255, 255, 0.75);
+  --glass-shadow: 0 8px 32px rgba(40, 50, 120, 0.14);
+  --blob-1: rgba(99, 140, 255, 0.45);
+  --blob-2: rgba(255, 140, 190, 0.38);
+  --blob-3: rgba(120, 220, 200, 0.38);
+  --ink: #0b1020;
+  --ink-2: #3d4560;
+  --ink-3: #5a6280;
   --accent: #2a78d6;
   --accent-ink: #ffffff;
   --series-1: #2a78d6;
@@ -20,52 +26,62 @@
   --warn: #fab219;
   --serious: #ec835a;
   --critical: #d03b3b;
-  --good-bg: #e6f5e6;
-  --warn-bg: #fdf3dc;
-  --serious-bg: #fcebe3;
-  --critical-bg: #f9e4e4;
-  --info-bg: #e5eefb;
+  --good-bg: rgba(12, 163, 12, 0.14);
+  --warn-bg: rgba(250, 178, 25, 0.2);
+  --serious-bg: rgba(236, 131, 90, 0.18);
+  --critical-bg: rgba(208, 59, 59, 0.14);
+  --info-bg: rgba(42, 120, 214, 0.15);
   --grad-end: #6a4fd8;
 }
 @media (prefers-color-scheme: dark) {
   :root:where(:not([data-theme="light"])) {
     color-scheme: dark;
-    --bg: #121211;
-    --surface: #1a1a19;
-    --surface-2: #232321;
-    --line: #34332f;
-    --ink: #f0efec;
-    --ink-2: #c3c2b7;
-    --ink-3: #9b9a92;
-    --accent: #3987e5;
-    --series-1: #3987e5;
-    --series-2: #d95926;
-    --good-bg: #12301a;
-    --warn-bg: #3a2f10;
-    --serious-bg: #3b2218;
-    --critical-bg: #3d1a1a;
-    --info-bg: #14263f;
-    --grad-end: #7c5ce6;
+    --bg: #0a0d1c;
+    --surface: rgba(255, 255, 255, 0.07);
+    --surface-2: rgba(255, 255, 255, 0.045);
+    --line: rgba(255, 255, 255, 0.13);
+    --glass-edge: rgba(255, 255, 255, 0.18);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+    --blob-1: rgba(70, 110, 255, 0.40);
+    --blob-2: rgba(190, 70, 190, 0.30);
+    --blob-3: rgba(30, 170, 170, 0.28);
+    --ink: #eef0fa;
+    --ink-2: #c4c8de;
+    --ink-3: #9aa0bd;
+    --accent: #5a9bf0;
+    --series-1: #5a9bf0;
+    --series-2: #e8703a;
+    --good-bg: rgba(40, 200, 80, 0.16);
+    --warn-bg: rgba(250, 178, 25, 0.18);
+    --serious-bg: rgba(236, 131, 90, 0.18);
+    --critical-bg: rgba(230, 80, 80, 0.2);
+    --info-bg: rgba(90, 155, 240, 0.18);
+    --grad-end: #8a6cf0;
   }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #121211;
-  --surface: #1a1a19;
-  --surface-2: #232321;
-  --line: #34332f;
-  --ink: #f0efec;
-  --ink-2: #c3c2b7;
-  --ink-3: #9b9a92;
-  --accent: #3987e5;
-  --series-1: #3987e5;
-  --series-2: #d95926;
-  --good-bg: #12301a;
-  --warn-bg: #3a2f10;
-  --serious-bg: #3b2218;
-  --critical-bg: #3d1a1a;
-  --info-bg: #14263f;
-  --grad-end: #7c5ce6;
+  --bg: #0a0d1c;
+  --surface: rgba(255, 255, 255, 0.07);
+  --surface-2: rgba(255, 255, 255, 0.045);
+  --line: rgba(255, 255, 255, 0.13);
+  --glass-edge: rgba(255, 255, 255, 0.18);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  --blob-1: rgba(70, 110, 255, 0.40);
+  --blob-2: rgba(190, 70, 190, 0.30);
+  --blob-3: rgba(30, 170, 170, 0.28);
+  --ink: #eef0fa;
+  --ink-2: #c4c8de;
+  --ink-3: #9aa0bd;
+  --accent: #5a9bf0;
+  --series-1: #5a9bf0;
+  --series-2: #e8703a;
+  --good-bg: rgba(40, 200, 80, 0.16);
+  --warn-bg: rgba(250, 178, 25, 0.18);
+  --serious-bg: rgba(236, 131, 90, 0.18);
+  --critical-bg: rgba(230, 80, 80, 0.2);
+  --info-bg: rgba(90, 155, 240, 0.18);
+  --grad-end: #8a6cf0;
 }
 
 @theme inline {
@@ -93,7 +109,12 @@ body,
   height: 100%;
 }
 body {
-  background: radial-gradient(1200px 400px at 80% -10%, color-mix(in srgb, var(--accent) 9%, transparent), transparent), var(--bg);
+  background:
+    radial-gradient(900px 600px at 8% 0%, var(--blob-1), transparent 60%),
+    radial-gradient(800px 600px at 95% 12%, var(--blob-2), transparent 60%),
+    radial-gradient(900px 700px at 60% 105%, var(--blob-3), transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
   color: var(--ink);
   font-family: var(--font-sans);
   font-size: 14px;
@@ -155,4 +176,40 @@ main > * {
 textarea, input, select { transition: border-color 0.15s, box-shadow 0.15s; }
 textarea:focus, input:focus, select:focus {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+/* ───────── Glass ─────────
+   Every translucent surface gets blur, a bright edge and a soft shadow. */
+.bg-surface,
+[class*="bg-surface/"] {
+  -webkit-backdrop-filter: blur(18px) saturate(170%);
+  backdrop-filter: blur(18px) saturate(170%);
+  box-shadow: inset 0 1px 0 var(--glass-edge), var(--glass-shadow);
+}
+.bg-surface-2,
+[class*="bg-surface-2/"] {
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  backdrop-filter: blur(10px) saturate(140%);
+  box-shadow: inset 0 1px 0 var(--glass-edge);
+}
+.bg-surface,
+.bg-surface-2 {
+  border-color: var(--glass-edge);
+}
+header.backdrop-blur {
+  -webkit-backdrop-filter: blur(18px) saturate(170%);
+  backdrop-filter: blur(18px) saturate(170%);
+  background: var(--surface);
+}
+input,
+textarea,
+select {
+  background: var(--surface-2);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+/* No backdrop-filter support: fall back to near-opaque surfaces so text stays readable. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root { --surface: rgba(250, 250, 255, 0.94); --surface-2: rgba(240, 242, 252, 0.94); }
+  :root[data-theme="dark"] { --surface: rgba(26, 28, 46, 0.96); --surface-2: rgba(36, 38, 60, 0.96); }
 }
