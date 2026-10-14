@@ -30,7 +30,7 @@ const NAV: { group: string; items: { to: string; label: string; icon: LucideIcon
   {
     group: "1 · Monitor",
     items: [
-      { to: "/", label: "Overview", icon: LayoutDashboard },
+      { to: "/overview", label: "Overview", icon: LayoutDashboard },
       { to: "/guard", label: "Live Guard (try it)", icon: ShieldCheck },
       { to: "/approvals", label: "Approvals", icon: UserCheck, badge: "approvals" },
       { to: "/incidents", label: "Incidents", icon: Siren, badge: "incidents" },
@@ -108,7 +108,7 @@ export default function Layout() {
                 <NavLink
                   key={to}
                   to={to}
-                  end={to === "/"}
+                  end
                   className={({ isActive }) =>
                     `flex items-center gap-2.5 rounded-lg border-l-2 px-2 py-1.5 text-sm transition ${isActive ? "border-accent bg-[var(--info-bg)] font-medium text-ink" : "border-transparent text-ink-2 hover:bg-surface-2"}`
                   }
@@ -165,7 +165,7 @@ export default function Layout() {
             <NavLink
               key={to}
               to={to}
-              end={to === "/"}
+              end
               className={({ isActive }) =>
                 `flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs ${isActive ? "bg-surface-2 font-medium text-ink" : "text-ink-2"}`
               }

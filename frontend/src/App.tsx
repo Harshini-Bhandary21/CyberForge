@@ -1,5 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import Layout from "@/components/Layout";
+import Landing from "@/pages/Landing";
 import Approvals from "@/pages/Approvals";
 import Behaviour from "@/pages/Behaviour";
 import CodeGuard from "@/pages/CodeGuard";
@@ -16,8 +17,9 @@ import Scanner from "@/pages/Scanner";
 export default function App() {
   return (
     <Routes>
+      <Route index element={<Landing />} />
       <Route element={<Layout />}>
-        <Route index element={<Overview />} />
+        <Route path="overview" element={<Overview />} />
         <Route path="guard" element={<LiveGuard />} />
         <Route path="approvals" element={<Approvals />} />
         <Route path="incidents" element={<Incidents />} />

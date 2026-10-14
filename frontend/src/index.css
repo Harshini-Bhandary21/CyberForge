@@ -238,3 +238,31 @@ nav a {
 nav a[aria-current="page"] {
   box-shadow: var(--clay-press);
 }
+
+/* ───────── Landing page ───────── */
+.lp-gradient-text {
+  background: linear-gradient(100deg, var(--accent), var(--series-2), var(--accent));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: lp-shine 6s linear infinite;
+}
+.lp-gradient-bg { background: linear-gradient(135deg, var(--accent), var(--series-2)); }
+@keyframes lp-shine { to { background-position: 200% center; } }
+@keyframes lp-float { 50% { transform: translateY(-8px); } }
+.lp-float { animation: lp-float 5s ease-in-out infinite; }
+@keyframes lp-ring { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: none; } }
+.lp-ring { transform-origin: center; transform-box: fill-box; animation: lp-ring 0.6s ease-out both; }
+@keyframes lp-pulse { 50% { opacity: 0.45; } }
+.lp-pulse { animation: lp-pulse 1.6s ease-in-out infinite; }
+@keyframes lp-arrow { from { transform: translate(60px, -60px); opacity: 0; } 60% { opacity: 1; } to { transform: none; opacity: 1; } }
+.lp-arrow { animation: lp-arrow 0.9s 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@keyframes lp-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.lp-rise { opacity: 0; animation: lp-rise 0.5s ease-out forwards; }
+.lp-lift { transition: transform 0.2s ease; }
+.lp-lift:hover { transform: translateY(-4px); }
+.lp-cta { transition: transform 0.15s ease, filter 0.15s ease; box-shadow: 0 8px 20px color-mix(in srgb, var(--accent) 40%, transparent); }
+.lp-cta:hover { transform: translateY(-2px); filter: brightness(1.08); }
+@keyframes lp-caret { 50% { opacity: 0; } }
+.lp-caret { animation: lp-caret 1s steps(1) infinite; color: var(--accent); }
