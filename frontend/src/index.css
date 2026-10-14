@@ -1,81 +1,95 @@
 @import "tailwindcss";
 
 /* ───────── Design tokens ─────────
-   Light/dark are selected steps of the same hues (validated reference palette):
-   series-1 blue, series-2 teal; status colours are reserved for state and always ship with an icon + label. */
+   Ultra-modern minimalist palette matching the Landing page:
+   Clean canvas, floating glass cards, and vibrant lime green (#a3e635) / cyan highlights. */
 :root {
   color-scheme: light;
-  /* Claymorphism: soft, puffy, opaque surfaces lit from the top-left (light edge + dark drop shadow). */
-  --bg: #edf0f5;
-  --surface: #f8fafc;
-  --surface-2: #e4e9f0;
-  --line: rgba(40, 60, 100, 0.12);
+  --bg: #f3f4f6;
+  --surface: #ffffff;
+  --surface-2: #f8fafc;
+  --line: rgba(15, 23, 42, 0.08);
   --glass-edge: rgba(255, 255, 255, 0.95);
-  --glass-shadow: rgba(60, 80, 120, 0.22);
-  --clay-inner: rgba(60, 80, 120, 0.1);
+  --glass-shadow: rgba(15, 23, 42, 0.05);
+  --clay-inner: rgba(15, 23, 42, 0.02);
   --ink: #0f172a;
-  --ink-2: #334155;
-  --ink-3: #566377;
-  --accent: #2563eb;
+  --ink-2: #475569;
+  --ink-3: #64748b;
+  --accent: #65a30d;
+  --accent-neon: #a3e635;
   --accent-ink: #ffffff;
-  --series-1: #2563eb;
-  --series-2: #0f766e;
-  --good: #15803d;
-  --warn: #b45309;
-  --serious: #c2410c;
-  --critical: #b91c1c;
-  --good-bg: rgba(21, 128, 61, 0.12);
-  --warn-bg: rgba(180, 83, 9, 0.13);
-  --serious-bg: rgba(194, 65, 12, 0.12);
-  --critical-bg: rgba(185, 28, 28, 0.11);
-  --info-bg: rgba(37, 99, 235, 0.11);
-  --grad-end: #1d4ed8;
+  --series-1: #65a30d;
+  --series-2: #0284c7;
+  --good: #16a34a;
+  --warn: #d97706;
+  --serious: #ea580c;
+  --critical: #e11d48;
+  --good-bg: rgba(163, 230, 53, 0.16);
+  --warn-bg: rgba(245, 158, 11, 0.13);
+  --serious-bg: rgba(234, 88, 12, 0.12);
+  --critical-bg: rgba(225, 29, 72, 0.12);
+  --info-bg: rgba(163, 230, 53, 0.12);
+  --grad-end: #38bdf8;
 }
+
 @media (prefers-color-scheme: dark) {
   :root:where(:not([data-theme="light"])) {
     color-scheme: dark;
-    --bg: #0e131c;
-    --surface: #19212e;
-    --surface-2: #121823;
-    --line: rgba(170, 195, 240, 0.1);
-    --glass-edge: rgba(170, 195, 240, 0.08);
-    --glass-shadow: rgba(0, 0, 0, 0.6);
-    --clay-inner: rgba(0, 0, 0, 0.4);
-    --ink: #e8edf5;
-    --ink-2: #c0cadb;
-    --ink-3: #8e9bb0;
-    --accent: #3b82f6;
-    --series-1: #60a5fa;
-    --series-2: #2dd4bf;
-    --good-bg: rgba(34, 197, 94, 0.15);
-    --warn-bg: rgba(245, 158, 11, 0.16);
+    --bg: #090d16;
+    --surface: #111827;
+    --surface-2: #1e293b;
+    --line: rgba(255, 255, 255, 0.08);
+    --glass-edge: rgba(255, 255, 255, 0.06);
+    --glass-shadow: rgba(0, 0, 0, 0.5);
+    --clay-inner: rgba(0, 0, 0, 0.2);
+    --ink: #f8fafc;
+    --ink-2: #cbd5e1;
+    --ink-3: #94a3b8;
+    --accent: #a3e635;
+    --accent-neon: #a3e635;
+    --accent-ink: #090d16;
+    --series-1: #a3e635;
+    --series-2: #38bdf8;
+    --good: #4ade80;
+    --warn: #fbbf24;
+    --serious: #fb923c;
+    --critical: #fb7185;
+    --good-bg: rgba(163, 230, 53, 0.18);
+    --warn-bg: rgba(251, 191, 36, 0.16);
     --serious-bg: rgba(251, 146, 60, 0.16);
-    --critical-bg: rgba(248, 113, 113, 0.17);
-    --info-bg: rgba(59, 130, 246, 0.17);
-    --grad-end: #2563eb;
+    --critical-bg: rgba(251, 113, 133, 0.16);
+    --info-bg: rgba(163, 230, 53, 0.15);
+    --grad-end: #38bdf8;
   }
 }
+
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0e131c;
-  --surface: #19212e;
-  --surface-2: #121823;
-  --line: rgba(170, 195, 240, 0.1);
-  --glass-edge: rgba(170, 195, 240, 0.08);
-  --glass-shadow: rgba(0, 0, 0, 0.6);
-  --clay-inner: rgba(0, 0, 0, 0.4);
-  --ink: #e8edf5;
-  --ink-2: #c0cadb;
-  --ink-3: #8e9bb0;
-  --accent: #3b82f6;
-  --series-1: #60a5fa;
-  --series-2: #2dd4bf;
-  --good-bg: rgba(34, 197, 94, 0.15);
-  --warn-bg: rgba(245, 158, 11, 0.16);
+  --bg: #090d16;
+  --surface: #111827;
+  --surface-2: #1e293b;
+  --line: rgba(255, 255, 255, 0.08);
+  --glass-edge: rgba(255, 255, 255, 0.06);
+  --glass-shadow: rgba(0, 0, 0, 0.5);
+  --clay-inner: rgba(0, 0, 0, 0.2);
+  --ink: #f8fafc;
+  --ink-2: #cbd5e1;
+  --ink-3: #94a3b8;
+  --accent: #a3e635;
+  --accent-neon: #a3e635;
+  --accent-ink: #090d16;
+  --series-1: #a3e635;
+  --series-2: #38bdf8;
+  --good: #4ade80;
+  --warn: #fbbf24;
+  --serious: #fb923c;
+  --critical: #fb7185;
+  --good-bg: rgba(163, 230, 53, 0.18);
+  --warn-bg: rgba(251, 191, 36, 0.16);
   --serious-bg: rgba(251, 146, 60, 0.16);
-  --critical-bg: rgba(248, 113, 113, 0.17);
-  --info-bg: rgba(59, 130, 246, 0.17);
-  --grad-end: #2563eb;
+  --critical-bg: rgba(251, 113, 133, 0.16);
+  --info-bg: rgba(163, 230, 53, 0.15);
+  --grad-end: #38bdf8;
 }
 
 @theme inline {
@@ -113,10 +127,11 @@ body {
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 ::selection {
-  background: color-mix(in srgb, var(--accent) 30%, transparent);
+  background: color-mix(in srgb, #a3e635 40%, transparent);
+  color: #0f172a;
 }
 table {
   border-collapse: collapse;
@@ -124,15 +139,15 @@ table {
 }
 th {
   text-align: left;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--ink-3);
   font-size: 12px;
-  padding: 8px 12px;
+  padding: 10px 14px;
   border-bottom: 1px solid var(--line);
   white-space: nowrap;
 }
 td {
-  padding: 10px 12px;
+  padding: 12px 14px;
   border-bottom: 1px solid var(--line);
   vertical-align: top;
 }
@@ -156,7 +171,7 @@ main > * {
   from { opacity: 0; transform: translateY(8px) scale(0.99); }
   to { opacity: 1; transform: none; }
 }
-.result-pop { animation: result-pop 0.35s ease-out both; }
+.result-pop { animation: result-pop 0.35s cubic-bezier(0.16, 1, 0.3, 1) both; }
 @keyframes step-in {
   from { opacity: 0; transform: translateX(-6px); }
   to { opacity: 1; transform: none; }
@@ -164,79 +179,68 @@ main > * {
 .step-in { opacity: 0; animation: step-in 0.35s ease-out forwards; }
 textarea, input, select { transition: border-color 0.15s, box-shadow 0.15s; }
 textarea:focus, input:focus, select:focus {
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+  box-shadow: 0 0 0 3px rgba(163, 230, 53, 0.25);
+  border-color: var(--accent);
 }
 
-/* ───────── Clay ─────────
-   Raised pieces: a light highlight top-left, a dark drop shadow bottom-right, big soft radii.
-   Wells (inputs, tracks, chips) are the opposite: pressed into the surface. */
+/* ───────── Modern Floating Cards & Controls ───────── */
 :root {
-  --clay-raise:
-    9px 9px 20px var(--glass-shadow),
-    -7px -7px 16px var(--glass-edge),
-    inset 2px 2px 3px var(--glass-edge),
-    inset -3px -3px 6px var(--clay-inner);
-  --clay-raise-sm:
-    5px 5px 11px var(--glass-shadow),
-    -4px -4px 9px var(--glass-edge),
-    inset 1px 1px 2px var(--glass-edge),
-    inset -2px -2px 4px var(--clay-inner);
-  --clay-press:
-    inset 4px 4px 8px var(--glass-shadow),
-    inset -4px -4px 8px var(--glass-edge);
+  --card-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+  --card-shadow-sm: 0 4px 12px -2px rgba(15, 23, 42, 0.04);
 }
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    --card-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    --card-shadow-sm: 0 6px 18px -4px rgba(0, 0, 0, 0.4);
+  }
+}
+:root[data-theme="dark"] {
+  --card-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  --card-shadow-sm: 0 6px 18px -4px rgba(0, 0, 0, 0.4);
+}
+
 .bg-surface {
-  border-color: transparent;
-  box-shadow: var(--clay-raise);
+  border: 1px solid var(--line);
+  box-shadow: var(--card-shadow);
 }
 .rounded-xl.bg-surface,
-.rounded-xl.bg-surface-2 {
-  border-radius: 16px;
+.rounded-xl.bg-surface-2,
+.rounded-2xl.bg-surface,
+.rounded-2xl.bg-surface-2 {
+  border-radius: 18px;
 }
 aside.bg-surface {
-  border-radius: 0 20px 20px 0;
-  border-right-color: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  border-right: 1px solid var(--line);
 }
 .bg-surface-2,
 [class*="bg-surface-2/"] {
-  border-color: transparent;
-  box-shadow: var(--clay-press);
+  border: 1px solid var(--line);
 }
 .rounded-xl.border-dashed {
   box-shadow: none;
   border: 2px dashed var(--line);
 }
 header.backdrop-blur {
-  background: var(--bg);
-  box-shadow: 0 6px 16px -8px var(--glass-shadow);
-  border-bottom-color: transparent;
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  box-shadow: 0 1px 0 0 var(--line);
 }
-/* Buttons and chips are puffy; inputs are pressed in. */
 button {
-  border-radius: 10px;
+  border-radius: 12px;
 }
-button.bg-gradient-to-br,
 button.border {
-  box-shadow: var(--clay-raise-sm);
-}
-button.bg-gradient-to-br:active,
-button.border:active {
-  box-shadow: var(--clay-press);
-  transform: translateY(1px);
+  box-shadow: var(--card-shadow-sm);
 }
 input,
 textarea,
 select {
   background: var(--surface-2);
-  border-radius: 10px;
-  border-color: transparent;
-  box-shadow: var(--clay-press);
+  border-radius: 12px;
+  border: 1px solid var(--line);
 }
 nav a {
-  border-radius: 10px;
-}
-nav a[aria-current="page"] {
-  box-shadow: var(--clay-press);
+  border-radius: 12px;
 }
 
 /* ───────── Landing page ───────── */

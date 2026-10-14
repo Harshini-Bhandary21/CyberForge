@@ -33,13 +33,13 @@ export function PageHeader({
     <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
       <div className="flex items-start gap-3">
         {Icon && (
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[var(--accent)] to-[var(--grad-end)] text-white shadow-sm">
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-neutral-900 text-[#a3e635] dark:bg-white/10 dark:text-[#a3e635] border border-line shadow-sm">
             <Icon size={22} aria-hidden />
           </span>
         )}
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
-          {subtitle && <p className="mt-1 max-w-3xl text-ink-2">{subtitle}</p>}
+          <h1 className="text-2xl font-bold tracking-tight text-ink">{title}</h1>
+          {subtitle && <p className="mt-1 max-w-3xl text-ink-2 leading-relaxed">{subtitle}</p>}
         </div>
       </div>
       {actions && <div className="flex items-center gap-2">{actions}</div>}
@@ -52,14 +52,14 @@ export function HowItWorks({ steps }: { steps: { icon: LucideIcon; title: string
   return (
     <ol className="mb-6 grid gap-3 sm:grid-cols-3" aria-label="How this works">
       {steps.map((st, i) => (
-        <li key={st.title} className="relative flex gap-3 rounded-xl border border-line bg-surface p-3.5 shadow-sm">
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-[var(--info-bg)] text-accent">
+        <li key={st.title} className="relative flex gap-3 rounded-2xl border border-line bg-surface p-4 shadow-sm">
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#a3e635]/15 text-[#65a30d] dark:text-[#a3e635]">
             <st.icon size={18} aria-hidden />
           </span>
           <div className="min-w-0">
-            <div className="text-[11px] font-semibold uppercase tracking-wide text-accent">Step {i + 1}</div>
-            <div className="font-medium leading-tight">{st.title}</div>
-            <p className="mt-0.5 text-xs text-ink-2">{st.text}</p>
+            <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#65a30d] dark:text-[#a3e635]">Step {i + 1}</div>
+            <div className="font-semibold leading-tight text-ink">{st.title}</div>
+            <p className="mt-0.5 text-xs text-ink-2 leading-relaxed">{st.text}</p>
           </div>
           {i < steps.length - 1 && (
             <ArrowRight size={16} className="absolute -right-2.5 top-1/2 z-[1] hidden -translate-y-1/2 rounded-full bg-bg text-ink-3 sm:block" aria-hidden />
@@ -73,12 +73,16 @@ export function HowItWorks({ steps }: { steps: { icon: LucideIcon; title: string
 /** Numbered form section: says what this part of the form is for. */
 export function FormSection({ n, title, desc, children }: { n?: number; title: string; desc?: ReactNode; children: ReactNode }) {
   return (
-    <fieldset className="rounded-xl border border-line bg-surface-2/50 p-3.5">
+    <fieldset className="rounded-2xl border border-line bg-surface-2/60 p-4">
       <legend className="sr-only">{title}</legend>
       <div className="mb-3 flex items-start gap-2.5">
-        {n != null && <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-accent text-xs font-semibold text-white">{n}</span>}
+        {n != null && (
+          <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-neutral-900 text-[#a3e635] dark:bg-[#a3e635] dark:text-neutral-950 text-xs font-bold font-mono">
+            {n}
+          </span>
+        )}
         <div>
-          <div className="text-sm font-semibold leading-6">{title}</div>
+          <div className="text-sm font-semibold leading-6 text-ink">{title}</div>
           {desc && <p className="text-xs text-ink-2">{desc}</p>}
         </div>
       </div>
@@ -328,18 +332,22 @@ export function Button({
   ...rest
 }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "secondary" | "danger" | "ghost"; loading?: boolean }) {
   const styles = {
-    primary: "bg-gradient-to-br from-[var(--accent)] to-[var(--grad-end)] text-white shadow-sm hover:brightness-110",
-    secondary: "border border-line bg-surface hover:bg-surface-2",
-    danger: "bg-critical text-white hover:brightness-110",
-    ghost: "hover:bg-surface-2",
+    primary:
+      "bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-[#a3e635] dark:text-neutral-950 dark:hover:bg-lime-300 font-semibold shadow-sm hover:shadow transition-all border border-neutral-700/50 dark:border-transparent",
+    secondary:
+      "border border-line bg-surface hover:bg-surface-2 text-ink shadow-sm hover:border-neutral-300 transition-all font-medium",
+    danger:
+      "bg-rose-600 text-white hover:bg-rose-500 shadow-sm transition-all font-medium",
+    ghost:
+      "hover:bg-surface-2 text-ink-2 hover:text-ink transition-colors font-medium",
   }[variant];
   return (
     <button
       {...rest}
       disabled={rest.disabled || loading}
-      className={`inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50 ${styles} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-xl px-3.5 py-1.5 text-xs tracking-wide transition-all disabled:cursor-not-allowed disabled:opacity-50 ${styles} ${className}`}
     >
-      {loading && <Loader2 size={14} className="animate-spin" aria-hidden />}
+      {loading && <Loader2 size={13} className="animate-spin" aria-hidden />}
       {children}
     </button>
   );
